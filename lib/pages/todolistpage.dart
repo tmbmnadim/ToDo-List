@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/data/listsvalue.dart';
+import 'package:todolist/pages/todocard.dart';
 
 class ListPage extends StatefulWidget {
   ListPage({
@@ -14,6 +16,10 @@ class ListPage extends StatefulWidget {
 class _ListPageState extends State<ListPage> {
   int monthValue = 8;
   DateTime? selectedDate = DateTime.now();
+  DateTime? firstDayOfMonth = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+  );
   List<String> monthName = [
     "JAN",
     "FEB",
@@ -30,11 +36,21 @@ class _ListPageState extends State<ListPage> {
   ];
   List<int> monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   List<String> weekDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-  List<int> selectedDay = [
-    (DateTime.now().toLocal().year),
-    (DateTime.now().toLocal().month),
-    (DateTime.now().toLocal().day)
-  ];
+  int firstWeekday = 0;
+  bool isCheckedbox = false;
+
+  List<List> selectedTask = [];
+
+  List<List> taskSelector(DateTime? selectedDateTask) {
+    List<List> selectedTask = [];
+    for (int i = 0; i < toDoList.length; i++) {
+      if (toDoList[i].contains(
+          "${selectedDateTask?.day}/${selectedDateTask?.month}/${selectedDateTask?.year}")) {
+        selectedTask.add(toDoList[i]);
+      }
+    }
+    return selectedTask;
+  }
 
   Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -46,19 +62,48 @@ class _ListPageState extends State<ListPage> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
+        selectedDate = selectedDate = DateTime(
+          picked.toLocal().year,
+          (picked.toLocal().month),
+          (picked.toLocal().day),
+          (DateTime.now().hour),
+          (DateTime.now().minute),
+          (DateTime.now().second),
+        );
       });
     }
   }
 
+  void dayUpdater(DateTime? selectedDateIs) {
+    firstDayOfMonth = DateTime(
+      (selectedDateIs?.toLocal().year as int),
+      (selectedDateIs?.toLocal().month as int),
+      1,
+    );
+  }
+
+  String greetingsUpdater(int runningHour) {
+    String greeting = "Good Morning!";
+    if (runningHour < 12 && runningHour >= 0) {
+      greeting = "Good Morning!";
+    }
+    if (runningHour >= 12 && runningHour <= 24) {
+      greeting = "Good Night!";
+    }
+    return greeting;
+  }
+
   @override
-  void setState(VoidCallback fn) {
-    super.setState(fn);
+  void initState() {
+    selectedTask = taskSelector(selectedDate);
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    selectedTask = taskSelector(selectedDate);
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -66,6 +111,10 @@ class _ListPageState extends State<ListPage> {
             // Calender Icon Appbar
             onTap: () {
               selectDate(context);
+
+              // This is used to select first day of selected month.
+              dayUpdater(selectedDate);
+              selectedTask = taskSelector(selectedDate);
               setState(() {});
             },
             child: const Icon(Icons.calendar_month),
@@ -101,9 +150,10 @@ class _ListPageState extends State<ListPage> {
                           alignment: Alignment.bottomLeft,
                           height: (screenHeight * 8) / 100,
                           width: screenWidth,
-                          child: const Text(
-                            "Greetings!",
-                            style: TextStyle(
+                          child: Text(
+                            greetingsUpdater(
+                                selectedDate?.toLocal().hour as int),
+                            style: const TextStyle(
                               fontSize: 25,
                             ),
                           ),
@@ -133,9 +183,17 @@ class _ListPageState extends State<ListPage> {
                         IconButton(
                           onPressed: () {
                             selectedDate = DateTime(
-                                selectedDate?.toLocal().year as int,
-                                (selectedDate?.toLocal().month as int) - 1,
-                                selectedDate?.toLocal().day as int);
+                              selectedDate?.toLocal().year as int,
+                              (selectedDate?.toLocal().month as int) - 1,
+                              (selectedDate?.toLocal().day as int),
+                              (selectedDate?.toLocal().hour as int),
+                              (selectedDate?.toLocal().minute as int),
+                              (selectedDate?.toLocal().second as int),
+                            );
+
+                            // This is used to select first day of selected month.
+                            dayUpdater(selectedDate);
+                            selectedTask = taskSelector(selectedDate);
                             setState(() {});
                           },
                           icon: const Icon(Icons.arrow_back_ios),
@@ -159,7 +217,15 @@ class _ListPageState extends State<ListPage> {
                             selectedDate = DateTime(
                               selectedDate?.toLocal().year as int,
                               (selectedDate?.toLocal().month as int) + 1,
+                              (selectedDate?.toLocal().day as int),
+                              (selectedDate?.toLocal().hour as int),
+                              (selectedDate?.toLocal().minute as int),
+                              (selectedDate?.toLocal().second as int),
                             );
+
+                            // This is used to select first day of selected month.
+                            dayUpdater(selectedDate);
+                            selectedTask = taskSelector(selectedDate);
                             setState(() {});
                           },
                           icon: const Icon(Icons.arrow_forward_ios),
@@ -175,31 +241,42 @@ class _ListPageState extends State<ListPage> {
                       scrollDirection: Axis.horizontal,
                       itemCount:
                           monthDays[(selectedDate?.toLocal().month as int) - 1],
-                      itemBuilder: (context, index) => Padding(
+                      itemBuilder: (context, dayIndex) => Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: GestureDetector(
-                          key: ValueKey("$index"),
+                          key: ValueKey("$dayIndex"),
                           onTap: () {
-                            selectedDay = [
+                            selectedDate = DateTime(
                               (selectedDate?.toLocal().year as int),
                               (selectedDate?.toLocal().month as int),
-                              (index + 1)
-                            ];
+                              (dayIndex + 1),
+                              (selectedDate?.toLocal().hour as int),
+                              (selectedDate?.toLocal().minute as int),
+                              (selectedDate?.toLocal().second as int),
+                            );
+
+                            // This is used to select first day of selected month.
+                            dayUpdater(selectedDate);
+                            selectedTask = taskSelector(selectedDate);
                             setState(() {});
                           },
                           child: Container(
                             // Day View
                             alignment: Alignment.center,
                             height: (screenHeight * 8) / 100,
-                            width: (screenHeight * 8) / 100,
-                            color: Colors.blue,
+                            width: selectedDate?.toLocal().day == dayIndex + 1
+                                ? (screenHeight * 12) / 100
+                                : (screenHeight * 8) / 100,
+                            color: selectedDate?.toLocal().day == dayIndex + 1
+                                ? Color.fromARGB(255, 0, 88, 252)
+                                : Colors.blue,
                             child: Column(
                               children: [
                                 Container(
                                   alignment: Alignment.center,
                                   height: (screenHeight * 5) / 100,
                                   child: Text(
-                                    "${index + 1}",
+                                    "${dayIndex + 1}",
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                         color: Colors.white,
@@ -211,10 +288,11 @@ class _ListPageState extends State<ListPage> {
                                   alignment: Alignment.center,
                                   height: (screenHeight * 3) / 100,
                                   child: Text(
-                                    weekDays[(((selectedDate?.toLocal().weekday
-                                                    as int) -
+                                    weekDays[(((firstDayOfMonth
+                                                    ?.toLocal()
+                                                    .weekday as int) -
                                                 1) +
-                                            index) %
+                                            dayIndex) %
                                         7],
                                     style: const TextStyle(
                                         color: Colors.white,
@@ -231,23 +309,22 @@ class _ListPageState extends State<ListPage> {
                 ],
               ),
             ),
-            Expanded(
-              child: ListView(
-                children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    height: 150,
-                    width: 20,
-                    color: Colors.green,
-                  ),
-                  Text(
-                    "Date: ${selectedDay[2]}/${selectedDay[1]}/${selectedDay[0]}",
-                    style: const TextStyle(
-                      color: Colors.green,
-                      fontSize: 45,
-                    ),
-                  ),
-                ],
+            Text(
+              "${selectedDate?.toLocal().day}/${selectedDate?.toLocal().month}/${selectedDate?.toLocal().year}",
+              style: const TextStyle(fontSize: 50),
+            ),
+            SizedBox(
+              height: (screenHeight * 50.8) / 100,
+              width: screenWidth,
+              child: ListView.builder(
+                itemCount: selectedTask.length,
+                itemBuilder: (context, index) => ToDoCard(
+                    key: ValueKey("ToDoCard-$index"),
+                    title: selectedTask[index][1],
+                    taskDate: selectedTask[index][2],
+                    isCheckedbox: selectedTask[index][0],
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight),
               ),
             ),
           ],
