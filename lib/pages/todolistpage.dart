@@ -14,6 +14,20 @@ class ListPage extends StatefulWidget {
 class _ListPageState extends State<ListPage> {
   int monthValue = 8;
   DateTime? selectedDate = DateTime.now();
+  List<String> monthName = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC"
+  ];
   List<int> monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   List<String> weekDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
   List<int> selectedDay = [
@@ -34,6 +48,11 @@ class _ListPageState extends State<ListPage> {
         selectedDate = picked;
       });
     }
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
   }
 
   @override
@@ -126,7 +145,7 @@ class _ListPageState extends State<ListPage> {
                             alignment: Alignment.center,
                             height: (screenHeight * 8) / 100,
                             child: Text(
-                              "${selectedDate?.toLocal().month}",
+                              "${monthName[(selectedDate?.toLocal().month as int) - 1]} ${selectedDate?.toLocal().year}",
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -183,25 +202,25 @@ class _ListPageState extends State<ListPage> {
                                     "${index + 1}",
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                        color: Colors.white,
                                         fontSize: 30,
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 Container(
-                                    alignment: Alignment.center,
-                                    height: (screenHeight * 3) / 100,
-                                    child: Text(
-                                      weekDays[(((selectedDate
-                                                      ?.toLocal()
-                                                      .weekday as int) -
-                                                  1) +
-                                              index) %
-                                          7],
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    )),
+                                  alignment: Alignment.center,
+                                  height: (screenHeight * 3) / 100,
+                                  child: Text(
+                                    weekDays[(((selectedDate?.toLocal().weekday
+                                                    as int) -
+                                                1) +
+                                            index) %
+                                        7],
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -216,16 +235,16 @@ class _ListPageState extends State<ListPage> {
               child: ListView(
                 children: [
                   Container(
-                    alignment: Alignment.center,
-                    height: (screenHeight * 60) / 100,
-                    width: screenWidth,
-                    color: Colors.transparent,
-                    child: Text(
-                      "Date: ${selectedDay[2]}/${selectedDay[1]}/${selectedDay[0]}",
-                      style: const TextStyle(
-                        color: Colors.green,
-                        fontSize: 45,
-                      ),
+                    alignment: Alignment.centerLeft,
+                    height: 150,
+                    width: 20,
+                    color: Colors.green,
+                  ),
+                  Text(
+                    "Date: ${selectedDay[2]}/${selectedDay[1]}/${selectedDay[0]}",
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontSize: 45,
                     ),
                   ),
                 ],
