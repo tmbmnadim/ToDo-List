@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:todolist/data/listsvalue.dart';
 import 'package:todolist/pages/todocard.dart';
@@ -130,7 +132,8 @@ class _ListPageState extends State<ListPage> {
         title: const Text("ToDo List"),
         centerTitle: true,
       ),
-      body: SizedBox(
+      body: Container(
+        color: Color.fromRGBO(100, 0, 0, 0.1), // Total background color.
         child: Column(
           children: [
             Container(
@@ -309,13 +312,144 @@ class _ListPageState extends State<ListPage> {
                 ],
               ),
             ),
-            Text(
-              "${selectedDate?.toLocal().day}/${selectedDate?.toLocal().month}/${selectedDate?.toLocal().year}",
-              style: const TextStyle(fontSize: 50),
+            const SizedBox(
+              height: 5,
             ),
-            SizedBox(
-              height: (screenHeight * 50.8) / 100,
+            Container(
+              alignment: Alignment.centerRight,
+              height: 50,
               width: screenWidth,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      height: 50,
+                      width: 80,
+                      decoration: const BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(20, 23),
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                            blurRadius: 10,
+                            spreadRadius: -18,
+                          ),
+                          BoxShadow(
+                            offset: Offset(5, 5),
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                            blurRadius: 10,
+                            spreadRadius: -5,
+                          ),
+                        ],
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 27, 63, 28),
+                          Color.fromARGB(255, 37, 83, 38),
+                          Color.fromARGB(255, 61, 141, 64),
+                          Color.fromARGB(255, 62, 150, 64),
+                          Color.fromARGB(255, 62, 150, 64),
+                          Color.fromARGB(255, 62, 150, 64),
+                          Color.fromARGB(255, 26, 59, 27),
+                        ]),
+                      ),
+                      child: const Icon(
+                        Icons.add_task,
+                        size: 35,
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.all(8),
+                      height: 50,
+                      width: 100,
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(0, 23),
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                            blurRadius: 10,
+                            spreadRadius: -18,
+                          ),
+                          BoxShadow(
+                            offset: Offset(0, 5),
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                            blurRadius: 5,
+                            spreadRadius: -5,
+                          ),
+                        ],
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 27, 63, 28),
+                          Color.fromARGB(255, 27, 63, 28),
+                          Color.fromARGB(255, 62, 150, 64),
+                          Color.fromARGB(255, 62, 150, 64),
+                          Color.fromARGB(255, 62, 150, 64),
+                          Color.fromARGB(255, 62, 150, 64),
+                          Color.fromARGB(255, 61, 141, 64),
+                          Color.fromARGB(255, 27, 63, 28),
+                          Color.fromARGB(255, 27, 63, 28),
+                        ]),
+                      ),
+                      child: const Icon(
+                        Icons.add_task,
+                        size: 35,
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      height: 50,
+                      width: 80,
+                      decoration: const BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(-10, 23),
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                            blurRadius: 10,
+                            spreadRadius: -18,
+                          ),
+                          BoxShadow(
+                            offset: Offset(-5, 5),
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                            blurRadius: 10,
+                            spreadRadius: -5,
+                          ),
+                        ],
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(255, 26, 59, 27),
+                          Color.fromARGB(255, 62, 150, 64),
+                          Color.fromARGB(255, 62, 150, 64),
+                          Color.fromARGB(255, 62, 150, 64),
+                          Color.fromARGB(255, 61, 141, 64),
+                          Color.fromARGB(255, 37, 83, 38),
+                          Color.fromARGB(255, 27, 63, 28),
+                        ]),
+                      ),
+                      child: const Icon(
+                        Icons.add_task,
+                        size: 35,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 8),
+            Expanded(
               child: ListView.builder(
                 itemCount: selectedTask.length,
                 itemBuilder: (context, index) => ToDoCard(
@@ -323,6 +457,10 @@ class _ListPageState extends State<ListPage> {
                     title: selectedTask[index][1],
                     taskDate: selectedTask[index][2],
                     isCheckedbox: selectedTask[index][0],
+                    checkboxOnChanged: (checkTask) {
+                      selectedTask[index][0] = !selectedTask[index][0];
+                      setState(() {});
+                    },
                     screenWidth: screenWidth,
                     screenHeight: screenHeight),
               ),

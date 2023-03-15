@@ -14,7 +14,7 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
-  ThemeMode darkLightMode = ThemeMode.dark;
+  ThemeMode darkLightMode = ThemeMode.light;
   IconData modeIcon = Icons.dark_mode;
   @override
   Widget build(BuildContext context) {
