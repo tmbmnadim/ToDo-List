@@ -84,8 +84,8 @@ flutter:
   #         style: italic
     - family: Grape Nuts
       fonts:
-        - asset: fonts/GrapeNuts-Regular.ttf
-          weight: 700
+        - asset: ./fonts/GrapeNuts-Regular.ttf
+          weight: 400
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

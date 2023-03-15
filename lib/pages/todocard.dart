@@ -105,6 +105,8 @@ class _ToDoCardState extends State<ToDoCard> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
+                          fontFamily: "Grape Nuts",
+                          fontWeight: FontWeight.w600,
                           fontSize: 25,
                         ),
                       ),
@@ -115,6 +117,8 @@ class _ToDoCardState extends State<ToDoCard> {
                         widget.taskToDo,
                         maxLines: 2,
                         style: const TextStyle(
+                          fontFamily: "Grape Nuts",
+                          fontWeight: FontWeight.w600,
                           fontSize: 18,
                         ),
                       ),
