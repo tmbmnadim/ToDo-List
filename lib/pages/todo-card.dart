@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:todolist/data/listsvalue.dart';
+import 'package:hive/hive.dart';
 
 class ToDoCard extends StatefulWidget {
-  ToDoCard(
+  const ToDoCard(
       {super.key,
       this.valueKey,
       this.title = "No Title!",
@@ -13,17 +11,17 @@ class ToDoCard extends StatefulWidget {
       this.onEditButton,
       this.onDeleteButton,
       this.checkboxOnChanged,
-      required this.isCheckedbox,
+      required this.isChecked,
       required this.screenWidth,
       required this.screenHeight});
-  ValueKey? valueKey;
-  void Function(bool?)? checkboxOnChanged;
-  bool? isCheckedbox;
-  String title;
-  void Function()? onEditButton;
-  void Function()? onDeleteButton;
-  String taskToDo;
-  String taskDate;
+  final ValueKey? valueKey;
+  final void Function(bool?)? checkboxOnChanged;
+  final bool? isChecked;
+  final String title;
+  final void Function()? onEditButton;
+  final void Function()? onDeleteButton;
+  final String taskToDo;
+  final String taskDate;
   final double screenWidth;
   final double screenHeight;
 
@@ -32,6 +30,7 @@ class ToDoCard extends StatefulWidget {
 }
 
 class _ToDoCardState extends State<ToDoCard> {
+  final _basicStates = Hive.box('stateBox');
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -39,20 +38,10 @@ class _ToDoCardState extends State<ToDoCard> {
       child: Container(
         key: widget.valueKey,
         width: widget.screenWidth - 16,
-        height: 150,
-        decoration: const BoxDecoration(
-          color: Colors.green,
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 43, 100, 46),
-              Color.fromARGB(255, 34, 78, 36),
-              Colors.green,
-            ],
-            stops: [0.1, 0.15, 1],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-          boxShadow: [
+        height: 140,
+        decoration: BoxDecoration(
+          color: _basicStates.get("darkLightMode") == 1?Colors.green.shade800:Colors.green.shade500,
+          boxShadow: const [
             BoxShadow(
               color: Color.fromRGBO(0, 0, 0, 0.5),
               offset: Offset(0, 20),
@@ -65,21 +54,12 @@ class _ToDoCardState extends State<ToDoCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 24),
+              padding: const EdgeInsets.all(8),
               alignment: Alignment.topCenter,
               height: 150,
               width: 50,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 88, 124, 47),
-                    Color.fromARGB(255, 71, 100, 38),
-                    Colors.lightGreen,
-                  ],
-                  stops: [0.1, 0.15, 1],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+              decoration: BoxDecoration(
+                color: _basicStates.get("darkLightMode") == 1?Colors.lightGreen:Colors.lightGreen.shade400,
               ),
               child: Transform.scale(
                 scale: 1.9,
@@ -88,7 +68,7 @@ class _ToDoCardState extends State<ToDoCard> {
                   activeColor: Colors.black,
                   fillColor: const MaterialStatePropertyAll(Colors.white),
                   checkColor: Colors.black87,
-                  value: widget.isCheckedbox,
+                  value: widget.isChecked,
                   onChanged: widget.checkboxOnChanged,
                 ),
               ),
@@ -99,7 +79,7 @@ class _ToDoCardState extends State<ToDoCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.only(top: 24, left: 8),
+                      padding: const EdgeInsets.only(top: 8, left: 8),
                       child: Text(
                         widget.title,
                         maxLines: 1,
@@ -145,8 +125,7 @@ class _ToDoCardState extends State<ToDoCard> {
                   GestureDetector(
                     onTap: widget.onEditButton,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 24),
+                      padding: const EdgeInsets.only(top: 16, bottom: 16),
                       child: const Icon(
                         Icons.edit,
                         size: 25,

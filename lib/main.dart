@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/pages/todocard.dart';
-import 'package:todolist/pages/todolistpage.dart';
+import 'package:todolist/pages/todo-list-page.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+
+  var _toDoListMem = await Hive.openBox('taskBox');
+  var _basicStates = await Hive.openBox('stateBox');
+  _basicStates.put("darkLightMode", 0);
+
   runApp(const MyHome());
 }
 
@@ -14,23 +20,29 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
+  final _basicStates = Hive.box('stateBox');
   ThemeMode darkLightMode = ThemeMode.light;
   IconData modeIcon = Icons.dark_mode;
   @override
   Widget build(BuildContext context) {
+    darkLightMode = _basicStates.get("darkLightMode") == 0
+        ? ThemeMode.light
+        : ThemeMode.dark;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "ToDo List",
       theme: ThemeData(
+        appBarTheme: AppBarTheme(color: Colors.green.shade500),
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
         brightness: Brightness.light,
-        primaryColor: Colors.lightBlue,
+        primaryColor: Colors.lightGreen,
       ),
       darkTheme: ThemeData(
+        appBarTheme: AppBarTheme(color: Colors.green.shade800),
         brightness: Brightness.dark,
-        primaryColor: Colors.blue,
+        primaryColor: Colors.green,
       ),
       themeMode: darkLightMode,
       home: ListPage(
@@ -39,6 +51,8 @@ class _MyHomeState extends State<MyHome> {
             darkLightMode == ThemeMode.light
                 ? darkLightMode = ThemeMode.dark
                 : darkLightMode = ThemeMode.light;
+            _basicStates.put(
+                "darkLightMode", darkLightMode == ThemeMode.light ? 0 : 1);
             setState(() {});
           },
           child: AnimatedSwitcher(

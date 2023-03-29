@@ -1,11 +1,12 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:todolist/data/listsvalue.dart';
-import 'package:todolist/pages/todocard.dart';
+import 'package:todolist/data/list-value.dart';
+import 'package:todolist/pages/dialog-box.dart';
+import 'package:todolist/pages/custom-button.dart';
+import 'package:todolist/pages/todo-card.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class ListPage extends StatefulWidget {
-  ListPage({
+  const ListPage({
     Key? key,
     required this.modeAction,
   }) : super(key: key);
@@ -16,6 +17,7 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> {
+  final _controller = TextEditingController();
   int monthValue = 8;
   DateTime? selectedDate = DateTime.now();
   DateTime? firstDayOfMonth = DateTime(
@@ -39,21 +41,26 @@ class _ListPageState extends State<ListPage> {
   List<int> monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   List<String> weekDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
   int firstWeekday = 0;
-  bool isCheckedbox = false;
+  bool isChecked = false;
 
+  final _toDoTaskMem = Hive.box('taskBox');
+  final _basicStates = Hive.box('stateBox');
+  ToDoDatabase tdb = ToDoDatabase();
   List<List> selectedTask = [];
 
+  // Selecting today's task
   List<List> taskSelector(DateTime? selectedDateTask) {
     List<List> selectedTask = [];
-    for (int i = 0; i < toDoList.length; i++) {
-      if (toDoList[i].contains(
+    for (int i = 0; i < tdb.toDoListMem.length; i++) {
+      if (tdb.toDoListMem.get(i).contains(
           "${selectedDateTask?.day}/${selectedDateTask?.month}/${selectedDateTask?.year}")) {
-        selectedTask.add(toDoList[i]);
+        selectedTask.add(tdb.toDoListMem.get(i));
       }
     }
     return selectedTask;
   }
 
+  // Picking a date from calender.
   Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -64,7 +71,7 @@ class _ListPageState extends State<ListPage> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        selectedDate = selectedDate = DateTime(
+        selectedDate = DateTime(
           picked.toLocal().year,
           (picked.toLocal().month),
           (picked.toLocal().day),
@@ -76,6 +83,7 @@ class _ListPageState extends State<ListPage> {
     }
   }
 
+  // Getting the first day of the month.
   void dayUpdater(DateTime? selectedDateIs) {
     firstDayOfMonth = DateTime(
       (selectedDateIs?.toLocal().year as int),
@@ -84,6 +92,7 @@ class _ListPageState extends State<ListPage> {
     );
   }
 
+  // Selecting a greeting according to current time.
   String greetingsUpdater(int runningHour) {
     String greeting = "Good Morning!";
     if (runningHour < 12 && runningHour >= 0) {
@@ -93,6 +102,32 @@ class _ListPageState extends State<ListPage> {
       greeting = "Good Night!";
     }
     return greeting;
+  }
+
+  void createNewTask() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return DialogBox(
+            controller: _controller,
+            onSave: () {
+              setState(() {
+                _toDoTaskMem.put(_toDoTaskMem.length, [
+                  false,
+                  _controller.value.text,
+                  "${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}"
+                ]);
+              });
+              _controller.clear();
+              Navigator.of(context).pop();
+            },
+            onCancel: () => Navigator.of(context).pop(),
+          );
+        });
+  }
+
+  void deleteTask() {
+    _toDoTaskMem.clear();
   }
 
   @override
@@ -132,8 +167,7 @@ class _ListPageState extends State<ListPage> {
         title: const Text("ToDo List"),
         centerTitle: true,
       ),
-      body: Container(
-        color: Color.fromRGBO(100, 0, 0, 0.1), // Total background color.
+      body: SizedBox(
         child: Column(
           children: [
             Container(
@@ -180,9 +214,10 @@ class _ListPageState extends State<ListPage> {
                     //MONTH View
                     height: (screenHeight * 8) / 100,
                     width: screenWidth,
-                    color: Colors.blue,
+                    color: _basicStates.get("darkLightMode") == 1?Colors.green.shade800:Colors.green.shade500,
                     child: Row(
                       children: [
+                        // Selects previous month
                         IconButton(
                           onPressed: () {
                             selectedDate = DateTime(
@@ -201,6 +236,8 @@ class _ListPageState extends State<ListPage> {
                           },
                           icon: const Icon(Icons.arrow_back_ios),
                         ),
+
+                        // Shows selected month and year.
                         Expanded(
                           child: Container(
                             alignment: Alignment.center,
@@ -215,6 +252,8 @@ class _ListPageState extends State<ListPage> {
                             ),
                           ),
                         ),
+
+                        // Selects next month.
                         IconButton(
                           onPressed: () {
                             selectedDate = DateTime(
@@ -236,6 +275,8 @@ class _ListPageState extends State<ListPage> {
                       ],
                     ),
                   ),
+
+                  // A list of days of current month.
                   Container(
                     height: (screenHeight * 11) / 100,
                     width: screenWidth,
@@ -271,10 +312,11 @@ class _ListPageState extends State<ListPage> {
                                 ? (screenHeight * 12) / 100
                                 : (screenHeight * 8) / 100,
                             color: selectedDate?.toLocal().day == dayIndex + 1
-                                ? Color.fromARGB(255, 0, 88, 252)
-                                : Colors.blue,
+                                ? _basicStates.get("darkLightMode") == 1?Colors.greenAccent:Colors.green.shade900
+                                : _basicStates.get("darkLightMode") == 1?Colors.green.shade800:Colors.green.shade500,
                             child: Column(
                               children: [
+                                // Days of current month
                                 Container(
                                   alignment: Alignment.center,
                                   height: (screenHeight * 5) / 100,
@@ -287,6 +329,8 @@ class _ListPageState extends State<ListPage> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),
+
+                                // Weekday
                                 Container(
                                   alignment: Alignment.center,
                                   height: (screenHeight * 3) / 100,
@@ -322,133 +366,20 @@ class _ListPageState extends State<ListPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 8,
-                      ),
-                      height: 50,
-                      width: 80,
-                      decoration: const BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            offset: Offset(20, 23),
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            blurRadius: 10,
-                            spreadRadius: -18,
-                          ),
-                          BoxShadow(
-                            offset: Offset(5, 5),
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            blurRadius: 10,
-                            spreadRadius: -5,
-                          ),
-                        ],
-                        gradient: LinearGradient(colors: [
-                          Color.fromARGB(255, 27, 63, 28),
-                          Color.fromARGB(255, 37, 83, 38),
-                          Color.fromARGB(255, 61, 141, 64),
-                          Color.fromARGB(255, 62, 150, 64),
-                          Color.fromARGB(255, 62, 150, 64),
-                          Color.fromARGB(255, 62, 150, 64),
-                          Color.fromARGB(255, 26, 59, 27),
-                        ]),
-                      ),
-                      child: const Icon(
-                        Icons.add_task,
-                        size: 35,
-                      ),
-                    ),
+                  // Left side button - Create Task
+                  CustomButton(
+                    onTap: () {
+                      createNewTask();
+                    },
+                    icon: Icons.add_task,
                   ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.all(8),
-                      height: 50,
-                      width: 100,
-                      decoration: const BoxDecoration(
-                        color: Colors.blue,
-                        boxShadow: [
-                          BoxShadow(
-                            offset: Offset(0, 23),
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            blurRadius: 10,
-                            spreadRadius: -18,
-                          ),
-                          BoxShadow(
-                            offset: Offset(0, 5),
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            blurRadius: 5,
-                            spreadRadius: -5,
-                          ),
-                        ],
-                        gradient: LinearGradient(colors: [
-                          Color.fromARGB(255, 27, 63, 28),
-                          Color.fromARGB(255, 27, 63, 28),
-                          Color.fromARGB(255, 62, 150, 64),
-                          Color.fromARGB(255, 62, 150, 64),
-                          Color.fromARGB(255, 62, 150, 64),
-                          Color.fromARGB(255, 62, 150, 64),
-                          Color.fromARGB(255, 61, 141, 64),
-                          Color.fromARGB(255, 27, 63, 28),
-                          Color.fromARGB(255, 27, 63, 28),
-                        ]),
-                      ),
-                      child: const Icon(
-                        Icons.add_task,
-                        size: 35,
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 8,
-                      ),
-                      height: 50,
-                      width: 80,
-                      decoration: const BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            offset: Offset(-10, 23),
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            blurRadius: 10,
-                            spreadRadius: -18,
-                          ),
-                          BoxShadow(
-                            offset: Offset(-5, 5),
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            blurRadius: 10,
-                            spreadRadius: -5,
-                          ),
-                        ],
-                        gradient: LinearGradient(colors: [
-                          Color.fromARGB(255, 26, 59, 27),
-                          Color.fromARGB(255, 62, 150, 64),
-                          Color.fromARGB(255, 62, 150, 64),
-                          Color.fromARGB(255, 62, 150, 64),
-                          Color.fromARGB(255, 61, 141, 64),
-                          Color.fromARGB(255, 37, 83, 38),
-                          Color.fromARGB(255, 27, 63, 28),
-                        ]),
-                      ),
-                      child: const Icon(
-                        Icons.add_task,
-                        size: 35,
-                      ),
-                    ),
-                  ),
+                  CustomButton(
+                      onTap: deleteTask,
+                      icon: Icons.clear_all),
                 ],
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
                 itemCount: selectedTask.length,
@@ -456,7 +387,7 @@ class _ListPageState extends State<ListPage> {
                     key: ValueKey("ToDoCard-$index"),
                     title: selectedTask[index][1],
                     taskDate: selectedTask[index][2],
-                    isCheckedbox: selectedTask[index][0],
+                    isChecked: selectedTask[index][0],
                     checkboxOnChanged: (checkTask) {
                       selectedTask[index][0] = !selectedTask[index][0];
                       setState(() {});
