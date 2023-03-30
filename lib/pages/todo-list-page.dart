@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/data/list-value.dart';
-import 'package:todolist/pages/dialog-box.dart';
 import 'package:todolist/pages/custom-button.dart';
 import 'package:todolist/pages/todo-card.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+import '../util/task-management.dart';
 
 class ListPage extends StatefulWidget {
   const ListPage({
@@ -46,63 +46,46 @@ class _ListPageState extends State<ListPage> {
 
   final _toDoListMem = Hive.box('taskBox');
   final _basicStates = Hive.box('stateBox');
-  ToDoDatabase tdb = ToDoDatabase();
+  TaskManager tdb = TaskManager();
   List<List> selectedTask = [];
 
-  // Selecting today's task
-  List<List> taskSelector(DateTime? selectedDateTask) {
-    List<List> selectedTask = [];
-    // Storing current date
-    String currentDate =
-        "${selectedDateTask?.day}/${selectedDateTask?.month}/${selectedDateTask?.year}";
-
-    for (int i = 0; i < _toDoListMem.length; i++) {
-      if (_toDoListMem.getAt(i)[3] == currentDate) {
-        selectedTask.add(_toDoListMem.getAt(i));
+  Color colorSelector(int index) {
+    Color dateColor = Colors.green;
+    // If "All Tasks" is not selected
+    if (_basicStates.get("allTasks") == 0) {
+      // If that date is selected
+      if (selectedDate?.toLocal().day == index + 1) {
+        dateColor = _basicStates.get("darkLightMode") == 1
+            ? Colors.greenAccent
+            : Colors.green.shade900;
+      } else {
+        dateColor = _basicStates.get("darkLightMode") == 1
+            ? Colors.green.shade800
+            : Colors.green.shade500;
       }
+    } else {
+      // If "All Tasks" is selected
+      dateColor = _basicStates.get("darkLightMode") == 1
+          ? Colors.green.shade800
+          : Colors.green.shade500;
     }
-    return selectedTask;
+
+    return dateColor;
   }
 
-  void createNewTask() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return DialogBox(
-            titleController: _titleController,
-            taskController: _taskController,
-            onSave: () {
-              setState(() {
-                _toDoListMem.put(_toDoListMem.length, [
-                  false,
-                  _titleController.value.text,
-                  _taskController.value.text,
-                  "${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}"
-                ]);
-              });
-              _titleController.clear();
-              _taskController.clear();
-              Navigator.of(context).pop();
-            },
-            onCancel: () => Navigator.of(context).pop(),
-          );
-        });
-  }
+  double widthSelector(int index, double screenHeight) {
+    double selectedWidth = (screenHeight * 8) / 100;
+    // If "All Tasks" is not selected
+    if (_basicStates.get("allTasks") == 0) {
+      selectedWidth = selectedDate?.toLocal().day == index + 1
+          ? (screenHeight * 12) / 100
+          : (screenHeight * 8) / 100;
+    } else {
+      // If "All Tasks" is selected
+      selectedWidth = (screenHeight * 8) / 100;
+    }
 
-  void clearTasks() {
-    List tempList = [];
-    List tempListRev = [];
-    for (int i = 0; i < _toDoListMem.length; i++) {
-      if (_toDoListMem.getAt(i)[3] ==
-          "${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}") {
-        tempList.add(i);
-      }
-    }
-    tempListRev = List.from(tempList.reversed);
-    for (int j = 0; j < tempListRev.length; j++) {
-      _toDoListMem.deleteAt(tempListRev[j]);
-    }
-    setState(() {});
+    return selectedWidth;
   }
 
   // Picking a date from calender.
@@ -151,7 +134,7 @@ class _ListPageState extends State<ListPage> {
 
   @override
   void initState() {
-    selectedTask = taskSelector(selectedDate);
+    selectedTask = tdb.taskSelector(selectedDate);
     super.initState();
   }
 
@@ -159,7 +142,12 @@ class _ListPageState extends State<ListPage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    selectedTask = taskSelector(selectedDate);
+    selectedTask = tdb.taskSelector(selectedDate);
+    String currentDate =
+        "${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}";
+    String taskUniqueID =
+        "${selectedDate?.day}${selectedDate?.month}${selectedDate?.year}"
+        "${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}${DateTime.now().millisecond}";
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -170,7 +158,7 @@ class _ListPageState extends State<ListPage> {
 
               // This is used to select first day of selected month.
               dayUpdater(selectedDate);
-              selectedTask = taskSelector(selectedDate);
+              selectedTask = tdb.taskSelector(selectedDate);
               setState(() {});
             },
             child: const Icon(Icons.calendar_month),
@@ -252,7 +240,7 @@ class _ListPageState extends State<ListPage> {
 
                             // This is used to select first day of selected month.
                             dayUpdater(selectedDate);
-                            selectedTask = taskSelector(selectedDate);
+                            selectedTask = tdb.taskSelector(selectedDate);
                             setState(() {});
                           },
                           icon: const Icon(Icons.arrow_back_ios),
@@ -288,7 +276,7 @@ class _ListPageState extends State<ListPage> {
 
                             // This is used to select first day of selected month.
                             dayUpdater(selectedDate);
-                            selectedTask = taskSelector(selectedDate);
+                            selectedTask = tdb.taskSelector(selectedDate);
                             setState(() {});
                           },
                           icon: const Icon(Icons.arrow_forward_ios),
@@ -302,80 +290,113 @@ class _ListPageState extends State<ListPage> {
                     height: (screenHeight * 11) / 100,
                     width: screenWidth,
                     color: const Color.fromRGBO(125, 125, 125, 0.25),
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount:
-                          monthDays[(selectedDate?.toLocal().month as int) - 1],
-                      itemBuilder: (context, dayIndex) => Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          key: ValueKey("$dayIndex"),
-                          onTap: () {
-                            selectedDate = DateTime(
-                              (selectedDate?.toLocal().year as int),
-                              (selectedDate?.toLocal().month as int),
-                              (dayIndex + 1),
-                              (selectedDate?.toLocal().hour as int),
-                              (selectedDate?.toLocal().minute as int),
-                              (selectedDate?.toLocal().second as int),
-                            );
-
-                            // This is used to select first day of selected month.
-                            dayUpdater(selectedDate);
-                            selectedTask = taskSelector(selectedDate);
-                            setState(() {});
-                          },
-                          child: Container(
-                            // Day View
-                            alignment: Alignment.center,
-                            height: (screenHeight * 8) / 100,
-                            width: selectedDate?.toLocal().day == dayIndex + 1
-                                ? (screenHeight * 12) / 100
-                                : (screenHeight * 8) / 100,
-                            color: selectedDate?.toLocal().day == dayIndex + 1
-                                ? _basicStates.get("darkLightMode") == 1
-                                    ? Colors.greenAccent
-                                    : Colors.green.shade900
-                                : _basicStates.get("darkLightMode") == 1
-                                    ? Colors.green.shade800
-                                    : Colors.green.shade500,
-                            child: Column(
-                              children: [
-                                // Days of current month
-                                Container(
-                                  alignment: Alignment.center,
-                                  height: (screenHeight * 5) / 100,
-                                  child: Text(
-                                    "${dayIndex + 1}",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          child: GestureDetector(
+                            onTap: () {
+                              _basicStates.put("allTasks", 1);
+                              setState(() {});
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: _basicStates.get("allTasks") == 0
+                                  ? (screenHeight * 8) / 100
+                                  : (screenHeight * 12) / 100,
+                              color: _basicStates.get("allTasks") == 0
+                                  ? _basicStates.get("darkLightMode") == 1
+                                      ? Colors.green.shade800
+                                      : Colors.green.shade500
+                                  : _basicStates.get("darkLightMode") == 1
+                                      ? Colors.greenAccent
+                                      : Colors.green.shade900,
+                              child: const Text(
+                                "All",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
-
-                                // Weekday
-                                Container(
-                                  alignment: Alignment.center,
-                                  height: (screenHeight * 3) / 100,
-                                  child: Text(
-                                    weekDays[(((firstDayOfMonth
-                                                    ?.toLocal()
-                                                    .weekday as int) -
-                                                1) +
-                                            dayIndex) %
-                                        7],
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
                         ),
-                      ),
+
+                        // Date Selector
+                        Expanded(
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: monthDays[
+                                (selectedDate?.toLocal().month as int) - 1],
+                            itemBuilder: (context, dayIndex) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                key: ValueKey("$dayIndex"),
+                                onTap: () {
+                                  selectedDate = DateTime(
+                                    (selectedDate?.toLocal().year as int),
+                                    (selectedDate?.toLocal().month as int),
+                                    (dayIndex + 1),
+                                    (selectedDate?.toLocal().hour as int),
+                                    (selectedDate?.toLocal().minute as int),
+                                    (selectedDate?.toLocal().second as int),
+                                  );
+
+                                  _basicStates.put("allTasks", 0);
+
+                                  // This is used to select first day of selected month.
+                                  dayUpdater(selectedDate);
+                                  selectedTask = tdb.taskSelector(selectedDate);
+                                  setState(() {});
+                                },
+                                child: Container(
+                                  // Day View
+                                  alignment: Alignment.center,
+                                  height: (screenHeight * 8) / 100,
+                                  width: widthSelector(dayIndex, screenHeight),
+                                  color: colorSelector(dayIndex),
+                                  child: Column(
+                                    children: [
+                                      // Days of current month
+                                      Container(
+                                        alignment: Alignment.center,
+                                        height: (screenHeight * 5) / 100,
+                                        child: Text(
+                                          "${dayIndex + 1}",
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+
+                                      // Weekday
+                                      Container(
+                                        alignment: Alignment.center,
+                                        height: (screenHeight * 3) / 100,
+                                        child: Text(
+                                          weekDays[(((firstDayOfMonth
+                                                          ?.toLocal()
+                                                          .weekday as int) -
+                                                      1) +
+                                                  dayIndex) %
+                                              7],
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 ],
@@ -394,11 +415,42 @@ class _ListPageState extends State<ListPage> {
                   // Left side button - Create Task
                   CustomButton(
                     onTap: () {
-                      createNewTask();
+                      tdb.createNewTask(
+                        context: context,
+                        titleController: _titleController,
+                        taskController: _taskController,
+                        onDatePick: () {
+                          selectDate(context);
+                          // This is used to select first day of selected month.
+                          dayUpdater(selectedDate);
+                          selectedTask = tdb.taskSelector(selectedDate);
+                          setState(() {});
+                        },
+                        onSave: () {
+                          setState(() {
+                            _toDoListMem.put(_toDoListMem.length, [
+                              false,
+                              _titleController.value.text,
+                              _taskController.value.text,
+                              currentDate,
+                              taskUniqueID,
+                              _toDoListMem.length,
+                            ]);
+                          });
+                          _titleController.clear();
+                          _taskController.clear();
+                          Navigator.of(context).pop();
+                        },
+                      );
                     },
                     icon: Icons.add_task,
                   ),
-                  CustomButton(onTap: clearTasks, icon: Icons.clear_all),
+                  CustomButton(
+                      onTap: () {
+                        tdb.clearTasks(currentDate);
+                        setState(() {});
+                      },
+                      icon: Icons.clear_all),
                 ],
               ),
             ),
@@ -407,17 +459,25 @@ class _ListPageState extends State<ListPage> {
               child: ListView.builder(
                 itemCount: selectedTask.length,
                 itemBuilder: (context, index) => ToDoCard(
-                    key: ValueKey("ToDoCard-$index"),
-                    title: selectedTask[index][1],
-                    taskToDo: selectedTask[index][2],
-                    taskDate: selectedTask[index][3],
-                    isChecked: selectedTask[index][0],
-                    checkboxOnChanged: (checkTask) {
-                      selectedTask[index][0] = !selectedTask[index][0];
-                      setState(() {});
-                    },
-                    screenWidth: screenWidth,
-                    screenHeight: screenHeight),
+                  key: ValueKey("ToDoCard-$index"),
+                  title: selectedTask[index][1],
+                  taskToDo: selectedTask[index][2],
+                  taskDate: selectedTask[index][3],
+                  isChecked: selectedTask[index][0],
+                  checkboxOnChanged: (checkTask) {
+                    selectedTask[index][0] = !selectedTask[index][0];
+                    _toDoListMem.getAt(selectedTask[index][5])[0] =
+                        selectedTask[index][0];
+                    setState(() {});
+                  },
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
+                  onEditButton: () {},
+                  onDeleteButton: () {
+                    tdb.deleteTask(selectedTask, index);
+                    setState(() {});
+                  },
+                ),
               ),
             ),
           ],

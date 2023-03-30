@@ -1,44 +1,60 @@
 import 'package:flutter/material.dart';
 
-class DialogBox extends StatefulWidget {
-  const DialogBox(
-      {Key? key,
-      required this.titleController,
-      required this.taskController,
-      required this.onSave,
-      required this.onCancel})
-      : super(key: key);
+class CreateTaskDialogBox extends StatefulWidget {
+  const CreateTaskDialogBox({
+    Key? key,
+    required this.titleController,
+    required this.taskController,
+    required this.onSave,
+    required this.onCancel,
+    required this.onDatePick,
+  }) : super(key: key);
 
   final TextEditingController titleController;
   final TextEditingController taskController;
   final Function()? onSave;
   final Function()? onCancel;
+  final Function()? onDatePick;
 
   @override
-  State<DialogBox> createState() => _DialogBoxState();
+  State<CreateTaskDialogBox> createState() => _CreateTaskDialogBoxState();
 }
 
-class _DialogBoxState extends State<DialogBox> {
+class _CreateTaskDialogBoxState extends State<CreateTaskDialogBox> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.green.shade200,
-      content: Container(
-        height: 150,
+      backgroundColor: Colors.green.shade300,
+      content: SizedBox(
+        height: 220,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             TextField(
               controller: widget.titleController,
-              style: const TextStyle(
-                fontFamily: "Grape Nuts",
-                fontWeight: FontWeight.w600,
+              decoration: const InputDecoration(
+                hintText: "Title of your task",
+                filled: true,
+                fillColor: Colors.white60,
               ),
+              maxLength: 50,
             ),
             TextField(
               controller: widget.taskController,
-              style: const TextStyle(
-                fontFamily: "Grape Nuts",
-                fontWeight: FontWeight.w600,
+              decoration: const InputDecoration(
+                hintText: "Description",
+                filled: true,
+                fillColor: Colors.white60,
+              ),
+            ),
+            IconButton(
+              onPressed: widget.onDatePick,
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              icon: const Icon(
+                Icons.calendar_month,
+                color: Colors.black,
               ),
             ),
             Row(
@@ -70,7 +86,7 @@ class _DialogBoxState extends State<DialogBox> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                )
+                ),
               ],
             )
           ],

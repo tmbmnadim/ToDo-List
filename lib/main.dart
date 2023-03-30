@@ -8,6 +8,7 @@ void main() async {
   var _toDoListMem = await Hive.openBox('taskBox');
   var _basicStates = await Hive.openBox('stateBox');
   _basicStates.put("darkLightMode", 0);
+  _basicStates.put("allTasks", 0);
 
   runApp(const MyHome());
 }
