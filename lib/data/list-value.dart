@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
 class ToDoDatabase {
-  final toDoListMem = Hive.box('taskbox');
+  final toDoListMem = Hive.box('taskBox');
 // Create new task
   void writeTask(int keyValue, List taskData) async {
     await toDoListMem.put(keyValue, taskData);

@@ -5,7 +5,7 @@ class ToDoCard extends StatefulWidget {
   const ToDoCard(
       {super.key,
       this.valueKey,
-      this.title = "No Title!",
+      required this.title,
       this.taskToDo = "No Task!",
       required this.taskDate,
       this.onEditButton,

@@ -17,7 +17,8 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> {
-  final _controller = TextEditingController();
+  final _titleController = TextEditingController();
+  final _taskController = TextEditingController();
   int monthValue = 8;
   DateTime? selectedDate = DateTime.now();
   DateTime? firstDayOfMonth = DateTime(
@@ -43,7 +44,7 @@ class _ListPageState extends State<ListPage> {
   int firstWeekday = 0;
   bool isChecked = false;
 
-  final _toDoTaskMem = Hive.box('taskBox');
+  final _toDoListMem = Hive.box('taskBox');
   final _basicStates = Hive.box('stateBox');
   ToDoDatabase tdb = ToDoDatabase();
   List<List> selectedTask = [];
@@ -51,13 +52,57 @@ class _ListPageState extends State<ListPage> {
   // Selecting today's task
   List<List> taskSelector(DateTime? selectedDateTask) {
     List<List> selectedTask = [];
-    for (int i = 0; i < tdb.toDoListMem.length; i++) {
-      if (tdb.toDoListMem.get(i).contains(
-          "${selectedDateTask?.day}/${selectedDateTask?.month}/${selectedDateTask?.year}")) {
-        selectedTask.add(tdb.toDoListMem.get(i));
+    // Storing current date
+    String currentDate =
+        "${selectedDateTask?.day}/${selectedDateTask?.month}/${selectedDateTask?.year}";
+
+    for (int i = 0; i < _toDoListMem.length; i++) {
+      if (_toDoListMem.getAt(i)[3] == currentDate) {
+        selectedTask.add(_toDoListMem.getAt(i));
       }
     }
     return selectedTask;
+  }
+
+  void createNewTask() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return DialogBox(
+            titleController: _titleController,
+            taskController: _taskController,
+            onSave: () {
+              setState(() {
+                _toDoListMem.put(_toDoListMem.length, [
+                  false,
+                  _titleController.value.text,
+                  _taskController.value.text,
+                  "${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}"
+                ]);
+              });
+              _titleController.clear();
+              _taskController.clear();
+              Navigator.of(context).pop();
+            },
+            onCancel: () => Navigator.of(context).pop(),
+          );
+        });
+  }
+
+  void clearTasks() {
+    List tempList = [];
+    List tempListRev = [];
+    for (int i = 0; i < _toDoListMem.length; i++) {
+      if (_toDoListMem.getAt(i)[3] ==
+          "${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}") {
+        tempList.add(i);
+      }
+    }
+    tempListRev = List.from(tempList.reversed);
+    for (int j = 0; j < tempListRev.length; j++) {
+      _toDoListMem.deleteAt(tempListRev[j]);
+    }
+    setState(() {});
   }
 
   // Picking a date from calender.
@@ -102,32 +147,6 @@ class _ListPageState extends State<ListPage> {
       greeting = "Good Night!";
     }
     return greeting;
-  }
-
-  void createNewTask() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return DialogBox(
-            controller: _controller,
-            onSave: () {
-              setState(() {
-                _toDoTaskMem.put(_toDoTaskMem.length, [
-                  false,
-                  _controller.value.text,
-                  "${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}"
-                ]);
-              });
-              _controller.clear();
-              Navigator.of(context).pop();
-            },
-            onCancel: () => Navigator.of(context).pop(),
-          );
-        });
-  }
-
-  void deleteTask() {
-    _toDoTaskMem.clear();
   }
 
   @override
@@ -214,7 +233,9 @@ class _ListPageState extends State<ListPage> {
                     //MONTH View
                     height: (screenHeight * 8) / 100,
                     width: screenWidth,
-                    color: _basicStates.get("darkLightMode") == 1?Colors.green.shade800:Colors.green.shade500,
+                    color: _basicStates.get("darkLightMode") == 1
+                        ? Colors.green.shade800
+                        : Colors.green.shade500,
                     child: Row(
                       children: [
                         // Selects previous month
@@ -312,8 +333,12 @@ class _ListPageState extends State<ListPage> {
                                 ? (screenHeight * 12) / 100
                                 : (screenHeight * 8) / 100,
                             color: selectedDate?.toLocal().day == dayIndex + 1
-                                ? _basicStates.get("darkLightMode") == 1?Colors.greenAccent:Colors.green.shade900
-                                : _basicStates.get("darkLightMode") == 1?Colors.green.shade800:Colors.green.shade500,
+                                ? _basicStates.get("darkLightMode") == 1
+                                    ? Colors.greenAccent
+                                    : Colors.green.shade900
+                                : _basicStates.get("darkLightMode") == 1
+                                    ? Colors.green.shade800
+                                    : Colors.green.shade500,
                             child: Column(
                               children: [
                                 // Days of current month
@@ -373,9 +398,7 @@ class _ListPageState extends State<ListPage> {
                     },
                     icon: Icons.add_task,
                   ),
-                  CustomButton(
-                      onTap: deleteTask,
-                      icon: Icons.clear_all),
+                  CustomButton(onTap: clearTasks, icon: Icons.clear_all),
                 ],
               ),
             ),
@@ -386,7 +409,8 @@ class _ListPageState extends State<ListPage> {
                 itemBuilder: (context, index) => ToDoCard(
                     key: ValueKey("ToDoCard-$index"),
                     title: selectedTask[index][1],
-                    taskDate: selectedTask[index][2],
+                    taskToDo: selectedTask[index][2],
+                    taskDate: selectedTask[index][3],
                     isChecked: selectedTask[index][0],
                     checkboxOnChanged: (checkTask) {
                       selectedTask[index][0] = !selectedTask[index][0];

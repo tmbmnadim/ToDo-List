@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class DialogBox extends StatefulWidget {
   const DialogBox(
       {Key? key,
-      required this.controller,
+      required this.titleController,
+      required this.taskController,
       required this.onSave,
       required this.onCancel})
       : super(key: key);
 
-  final TextEditingController controller;
+  final TextEditingController titleController;
+  final TextEditingController taskController;
   final Function()? onSave;
   final Function()? onCancel;
 
@@ -26,7 +28,14 @@ class _DialogBoxState extends State<DialogBox> {
         child: Column(
           children: [
             TextField(
-              controller: widget.controller,
+              controller: widget.titleController,
+              style: const TextStyle(
+                fontFamily: "Grape Nuts",
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            TextField(
+              controller: widget.taskController,
               style: const TextStyle(
                 fontFamily: "Grape Nuts",
                 fontWeight: FontWeight.w600,
