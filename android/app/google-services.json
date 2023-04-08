@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "239864358715",
+    "project_id": "todo-reminder-e2ddb",
+    "storage_bucket": "todo-reminder-e2ddb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239864358715:android:1c353613625823bfbd791e",
+        "android_client_info": {
+          "package_name": "com.deslopers.todolist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "239864358715-fjnhcp96t8matvt8oqdrmdbiblsfu3f0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFiRhJhK-rj39P8rZInaw2F41z45R80g0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "239864358715-fjnhcp96t8matvt8oqdrmdbiblsfu3f0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
