@@ -7,14 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:239864358715:android:1c353613625823bfbd791e",
+        "mobilesdk_app_id": "1:239864358715:android:7d2d3f78c2565a34bd791e",
         "android_client_info": {
-          "package_name": "com.deslopers.todolist"
+          "package_name": "com.example.portfolioqpp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "239864358715-fjnhcp96t8matvt8oqdrmdbiblsfu3f0.apps.googleusercontent.com",
+          "client_id": "239864358715-809tu633akh42eeeganilceidb2a714u.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +27,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "239864358715-fjnhcp96t8matvt8oqdrmdbiblsfu3f0.apps.googleusercontent.com",
+              "client_id": "239864358715-809tu633akh42eeeganilceidb2a714u.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
