@@ -7,10 +7,10 @@ import 'package:todolist/util/utility_manager.dart';
 class ListPage extends StatefulWidget {
   const ListPage({
     Key? key,
-    required this.modeAction,
+    // required this.modeAction,
   }) : super(key: key);
 
-  final Widget modeAction;
+  // final Widget modeAction;
   @override
   State<ListPage> createState() => _ListPageState();
 }
@@ -103,7 +103,33 @@ class _ListPageState extends State<ListPage> {
             child: const Icon(Icons.calendar_month),
           ),
           const SizedBox(width: 10),
-          widget.modeAction,
+          GestureDetector(
+            onTap: () {
+              _basicStates.put("darkLightMode",
+                  _basicStates.get("darkLightMode") == 1 ? 0 : 1);
+              // print(_basicStates.get("darkLightMode"));
+              _basicStates.get("darkLightMode") == 1 ? ThemeMode.light:ThemeMode.dark;
+              setState(() {});
+            },
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, anim) => RotationTransition(
+                turns: _basicStates.get("darkLightMode") == 0
+                    ? Tween<double>(begin: 1, end: 0.75).animate(anim)
+                    : Tween<double>(begin: 0.75, end: 1).animate(anim),
+                child: FadeTransition(opacity: anim, child: child),
+              ),
+              child: _basicStates.get("darkLightMode") == 0
+                  ? const Icon(
+                      Icons.light_mode,
+                      key: ValueKey("lightMode"),
+                    )
+                  : const Icon(
+                      Icons.dark_mode,
+                      key: ValueKey("darkMode"),
+                    ),
+            ),
+          ),
           const SizedBox(width: 10),
         ],
         title: const Text("ToDo List"),
