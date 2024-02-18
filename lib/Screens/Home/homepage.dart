@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/util/custom_button.dart';
-import 'package:todolist/util/todo_card.dart';
+import 'package:todolist/Custom Widgets/custom_button.dart';
+import 'package:todolist/Custom Widgets/todo_card.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:todolist/util/utility_manager.dart';
+import 'package:todolist/Custom Widgets/utility_manager.dart';
 
-class ListPage extends StatefulWidget {
-  const ListPage({
+class Homepage extends StatefulWidget {
+  const Homepage({
     Key? key,
     // required this.modeAction,
   }) : super(key: key);
 
   // final Widget modeAction;
   @override
-  State<ListPage> createState() => _ListPageState();
+  State<Homepage> createState() => _HomepageState();
 }
 
-class _ListPageState extends State<ListPage> {
+class _HomepageState extends State<Homepage> {
   final _titleController = TextEditingController();
   final _taskController = TextEditingController();
   int monthValue = 8;
@@ -77,11 +77,12 @@ class _ListPageState extends State<ListPage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    UtilManager tdb = UtilManager(
-        selectedDate: selectedDate,
-        screenHeight: screenHeight,
-        screenWidth: screenWidth);
-    selectedTask = tdb.taskSelector(selectedDate);
+    UtilManager um = UtilManager(
+      selectedDate: selectedDate,
+      screenHeight: screenHeight,
+      screenWidth: screenWidth,
+    );
+    selectedTask = um.taskSelector(selectedDate);
     String currentDate =
         "${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}";
     String taskUniqueID =
@@ -93,11 +94,11 @@ class _ListPageState extends State<ListPage> {
           GestureDetector(
             // Calender Icon Appbar
             onTap: () async {
-              selectedDate = await tdb.selectDate(context);
+              selectedDate = await um.selectDate(context);
 
               // This is used to select first day of selected month.
               dayUpdater(selectedDate);
-              selectedTask = tdb.taskSelector(selectedDate);
+              selectedTask = um.taskSelector(selectedDate);
               setState(() {});
             },
             child: const Icon(Icons.calendar_month),
@@ -108,7 +109,9 @@ class _ListPageState extends State<ListPage> {
               _basicStates.put("darkLightMode",
                   _basicStates.get("darkLightMode") == 1 ? 0 : 1);
               // print(_basicStates.get("darkLightMode"));
-              _basicStates.get("darkLightMode") == 1 ? ThemeMode.light:ThemeMode.dark;
+              _basicStates.get("darkLightMode") == 1
+                  ? ThemeMode.light
+                  : ThemeMode.dark;
               setState(() {});
             },
             child: AnimatedSwitcher(
@@ -156,7 +159,7 @@ class _ListPageState extends State<ListPage> {
                           height: (screenHeight * 8) / 100,
                           width: screenWidth,
                           child: Text(
-                            tdb.greetingsUpdater(
+                            um.greetingsUpdater(
                                 selectedDate?.toLocal().hour as int),
                             style: const TextStyle(
                               fontSize: 25,
@@ -191,14 +194,14 @@ class _ListPageState extends State<ListPage> {
                       children: [
                         // Selects previous month
                         IconButton(
-                          disabledColor: tdb.colorSelector(),
+                          disabledColor: um.colorSelector(),
                           onPressed: _basicStates.get("allTasks") == 0
                               ? () {
                                   changeMonthBy(-1);
 
                                   // This is used to select first day of selected month.
                                   dayUpdater(selectedDate);
-                                  selectedTask = tdb.taskSelector(selectedDate);
+                                  selectedTask = um.taskSelector(selectedDate);
                                   setState(() {});
                                 }
                               : null,
@@ -227,14 +230,14 @@ class _ListPageState extends State<ListPage> {
 
                         // Selects next month.
                         IconButton(
-                          disabledColor: tdb.colorSelector(),
+                          disabledColor: um.colorSelector(),
                           onPressed: _basicStates.get("allTasks") == 0
                               ? () {
                                   changeMonthBy(1);
 
                                   // This is used to select first day of selected month.
                                   dayUpdater(selectedDate);
-                                  selectedTask = tdb.taskSelector(selectedDate);
+                                  selectedTask = um.taskSelector(selectedDate);
                                   setState(() {});
                                 }
                               : null,
@@ -297,7 +300,7 @@ class _ListPageState extends State<ListPage> {
                                 (selectedDate?.toLocal().month as int) - 1],
                             itemBuilder: (context, dayIndex) => Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: tdb.dailyTaskSelector(
+                              child: um.dailyTaskSelector(
                                   index: dayIndex,
                                   onTap: () {
                                     selectedDate = DateTime(
@@ -314,7 +317,7 @@ class _ListPageState extends State<ListPage> {
                                     // This is used to select first day of selected month.
                                     dayUpdater(selectedDate);
                                     selectedTask =
-                                        tdb.taskSelector(selectedDate);
+                                        um.taskSelector(selectedDate);
                                     setState(() {});
                                   },
                                   weekDay: weekDays[(((firstDayOfMonth
@@ -345,15 +348,15 @@ class _ListPageState extends State<ListPage> {
                   // Left side button - Create Task
                   CustomButton(
                     onTap: () {
-                      tdb.createNewTask(
+                      um.createNewTask(
                         context: context,
                         titleController: _titleController,
                         taskController: _taskController,
                         onDatePick: () async {
-                          selectedDate = await tdb.selectDate(context);
+                          selectedDate = await um.selectDate(context);
                           // This is used to select first day of selected month.
                           dayUpdater(selectedDate);
-                          selectedTask = tdb.taskSelector(selectedDate);
+                          selectedTask = um.taskSelector(selectedDate);
                           setState(() {});
                         },
                         onSave: () {
@@ -362,7 +365,7 @@ class _ListPageState extends State<ListPage> {
                               false,
                               _titleController.value.text,
                               _taskController.value.text,
-                              currentDate,
+                              "$selectedDate",
                               taskUniqueID,
                               _toDoListMem.length,
                             ]);
@@ -380,7 +383,7 @@ class _ListPageState extends State<ListPage> {
                   ),
                   CustomButton(
                       onTap: () {
-                        tdb.clearTasks(currentDate);
+                        um.clearTasks(currentDate);
                         setState(() {});
                       },
                       buttonText: "Clear All",
@@ -394,26 +397,28 @@ class _ListPageState extends State<ListPage> {
             Expanded(
               child: ListView.builder(
                 itemCount: selectedTask.length,
-                itemBuilder: (context, index) => ToDoCard(
-                  key: ValueKey("ToDoCard-$index"),
-                  title: selectedTask[index][1],
-                  taskToDo: selectedTask[index][2],
-                  taskDate: selectedTask[index][3],
-                  isChecked: selectedTask[index][0],
-                  checkboxOnChanged: (checkTask) {
-                    selectedTask[index][0] = !selectedTask[index][0];
-                    _toDoListMem.getAt(selectedTask[index][5])[0] =
-                        selectedTask[index][0];
-                    setState(() {});
-                  },
-                  screenWidth: screenWidth,
-                  screenHeight: screenHeight,
-                  onEditButton: () {},
-                  onDeleteButton: () {
-                    tdb.deleteTask(selectedTask, index);
-                    setState(() {});
-                  },
-                ),
+                itemBuilder: (context, index) {
+                  return ToDoCard(
+                    key: ValueKey("ToDoCard-$index"),
+                    title: selectedTask[index][1],
+                    taskToDo: selectedTask[index][2],
+                    taskDate: selectedTask[index][3],
+                    isChecked: selectedTask[index][0],
+                    checkboxOnChanged: (checkTask) {
+                      selectedTask[index][0] = !selectedTask[index][0];
+                      _toDoListMem.getAt(selectedTask[index][5])[0] =
+                          selectedTask[index][0];
+                      setState(() {});
+                    },
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
+                    onEditButton: () {},
+                    onDeleteButton: () {
+                      um.deleteTask(selectedTask, index);
+                      setState(() {});
+                    },
+                  );
+                },
               ),
             ),
           ],

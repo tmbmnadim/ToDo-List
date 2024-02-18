@@ -1,29 +1,35 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:todolist/pages/sign_up_page.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'Screens/Authentication/sign_up_page.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await Hive.initFlutter();
 
   await Hive.openBox('taskBox');
   var basicStates = await Hive.openBox('stateBox');
-  basicStates.put("darkLightMode", ThemeMode.system==ThemeMode.light?1:0);
+  basicStates.put("darkLightMode", ThemeMode.system == ThemeMode.light ? 1 : 0);
   basicStates.put("allTasks", 0);
 
-  runApp(const MyHome());
+  runApp(const ToDoList());
 }
 
-class MyHome extends StatefulWidget {
-  const MyHome({Key? key}) : super(key: key);
+
+
+class ToDoList extends StatefulWidget {
+  const ToDoList({Key? key}) : super(key: key);
 
   @override
-  State<MyHome> createState() => _MyHomeState();
+  State<ToDoList> createState() => _ToDoListState();
 }
 
-class _MyHomeState extends State<MyHome> {
+class _ToDoListState extends State<ToDoList> {
   final _basicStates = Hive.box('stateBox');
   IconData modeIcon = Icons.dark_mode;
   @override
@@ -47,8 +53,8 @@ class _MyHomeState extends State<MyHome> {
       themeMode: _basicStates.get("darkLightMode") == 1
           ? ThemeMode.light
           : ThemeMode.dark,
-      home:
-      SignUpPage(
+      builder: EasyLoading.init(),
+      home: SignUpPage(
         modeAction: GestureDetector(
           onTap: () {
             _basicStates.put("darkLightMode",
@@ -65,44 +71,16 @@ class _MyHomeState extends State<MyHome> {
             ),
             child: _basicStates.get("darkLightMode") == 1
                 ? const Icon(
-                    Icons.light_mode,
-                    key: ValueKey("lightMode"),
-                  )
+              Icons.light_mode,
+              key: ValueKey("lightMode"),
+            )
                 : const Icon(
-                    Icons.dark_mode,
-                    key: ValueKey("darkMode"),
-                  ),
+              Icons.dark_mode,
+              key: ValueKey("darkMode"),
+            ),
           ),
         ),
       ),
-
-      // ListPage(
-      //   modeAction: GestureDetector(
-      //     onTap: () {
-      //       _basicStates.put(
-      //           "darkLightMode", _basicStates.get("darkLightMode") == 1 ? 0 : 1);
-      //       setState(() {});
-      //     },
-      //     child: AnimatedSwitcher(
-      //       duration: const Duration(milliseconds: 300),
-      //       transitionBuilder: (child, anim) => RotationTransition(
-      //         turns: _basicStates.get("darkLightMode") == 0
-      //             ? Tween<double>(begin: 1, end: 0.75).animate(anim)
-      //             : Tween<double>(begin: 0.75, end: 1).animate(anim),
-      //         child: FadeTransition(opacity: anim, child: child),
-      //       ),
-      //       child: _basicStates.get("darkLightMode") == 0
-      //           ? const Icon(
-      //               Icons.light_mode,
-      //               key: ValueKey("lightMode"),
-      //             )
-      //           : const Icon(
-      //               Icons.dark_mode,
-      //               key: ValueKey("darkMode"),
-      //             ),
-      //     ),
-      //   ),
-      // ),
     );
   }
 }
