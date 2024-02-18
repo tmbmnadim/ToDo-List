@@ -7,10 +7,14 @@ class CustomButton extends StatefulWidget {
     required this.onTap,
     required this.icon,
     this.borderRadius,
+    this.height = 80,
+    this.width = 120,
     required this.buttonText,
   }) : super(key: key);
 
   final IconData icon;
+  final double height;
+  final double width;
   final Function()? onTap;
   final String buttonText;
   final BorderRadiusGeometry? borderRadius;
@@ -57,9 +61,10 @@ class _CustomButtonState extends State<CustomButton> {
             ),
             Text(
               widget.buttonText,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w500,
               ),
             ),

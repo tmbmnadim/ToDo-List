@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:todolist/pages/todo_list_page.dart';
-import 'package:todolist/util/utility_manager.dart';
-import '../util/m_n_custom_icons_icons.dart';
-import '../util/social_sign_in_button.dart';
+import 'package:todolist/Custom Widgets/utility_manager.dart';
+
+import '../../Custom Widgets/m_n_custom_icons_icons.dart';
+import '../../Custom Widgets/social_sign_in_button.dart';
+import '../Home/homepage.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key, required this.modeAction}) : super(key: key);
@@ -67,68 +67,28 @@ class _SignUpPageState extends State<SignUpPage> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 48.0),
-            TextField(
-              controller: _otpController,
-              onChanged: (value) {},
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.send,
-                    color: Colors.greenAccent,
+            const SizedBox(height: 10),
+            // Sign In with Google
+            SocialSignInButton(
+              icon: Icons.person,
+              iconColor: _basicStates.get('darkLightMode') == 0
+                  ? Colors.grey.shade800
+                  : Colors.white,
+              text: 'No Sign in',
+              textColor: _basicStates.get('darkLightMode') == 0
+                  ? Colors.grey.shade800
+                  : Colors.white,
+              color: _basicStates.get('darkLightMode') == 0
+                  ? Colors.white
+                  : Colors.teal,
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Homepage(),
                   ),
-                ),
-                fillColor: _basicStates.get('darkLightMode') == 0
-                    ? Colors.white
-                    : Colors.grey.shade800,
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 2,
-                  horizontal: 15,
-                ),
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 1.2,
-                    color: Colors.white,
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 1.2,
-                    color: Colors.greenAccent,
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 1.2,
-                    color: _basicStates.get('darkLightMode') == 0
-                        ? Colors.white
-                        : Colors.grey.shade800,
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                labelText: "Sign in with OTP",
-                labelStyle: TextStyle(
-                  color: _basicStates.get('darkLightMode') == 0
-                      ? Colors.white
-                      : Colors.black,
-                ),
-                hintText: "+8801234567890",
-                hintStyle: TextStyle(
-                  color: _basicStates.get('darkLightMode') == 0
-                      ? Colors.white
-                      : Colors.grey.shade800,
-                ),
-              ),
-              keyboardType: TextInputType.phone,
+                );
+              },
             ),
             const SizedBox(height: 10),
             // Sign In with Google
@@ -144,24 +104,8 @@ class _SignUpPageState extends State<SignUpPage> {
               color: _basicStates.get('darkLightMode') == 0
                   ? Colors.white
                   : Colors.grey.shade800,
-              onTap: () async {
-                await firebase.verifyPhoneNumber(
-                  phoneNumber: _otpController.text,
-                  verificationCompleted: (completed) {
-                    EasyLoading.showSuccess("Varification Completed");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ListPage()));
-                  },
-                  verificationFailed: (error) {
-                    EasyLoading.showError("Something Went Wrong!");
-                  },
-                  codeSent: (send, otp) {
-                    EasyLoading.showSuccess("Code Sent");
-                  },
-                  codeAutoRetrievalTimeout: (timeout) {},
-                );
+              onTap: () {
+                signInWithGoogle();
               },
             ),
             const SizedBox(height: 10),
@@ -193,7 +137,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ListPage(),
+                      builder: (context) => const Homepage(),
                     ),
                   );
                 });
