@@ -2,7 +2,7 @@
 
 A ToDo List app.
 
-##Introducing ToDo List - your ultimate task management app powered by cutting-edge technologies!
+## Introducing ToDo List - your ultimate task management app powered by cutting-edge technologies!
 
 With ToDo List, you can effortlessly organize your tasks and stay on top of your schedule like never before. Here's what makes ToDo List stand out:
 
