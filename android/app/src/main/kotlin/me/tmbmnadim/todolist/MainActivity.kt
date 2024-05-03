@@ -1,6 +1,5 @@
-package com.deslopers.todolist
+package me.tmbmnadim.todolist
 
 import io.flutter.embedding.android.FlutterActivity
 
-class MainActivity: FlutterActivity() {
-}
+class MainActivity: FlutterActivity()

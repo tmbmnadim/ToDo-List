@@ -15,11 +15,8 @@ dependencies:
   syncfusion_flutter_calendar: ^24.1.46
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  firebase_auth: ^4.16.0
-  firebase_core: ^2.24.2
-  google_sign_in: ^6.2.1
-  bloc: ^8.1.2
   flutter_easyloading: ^3.0.5
+  riverpod: ^2.5.1
 
 
 dev_dependencies:
