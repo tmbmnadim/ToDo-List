@@ -24,7 +24,6 @@ class LocalRepo {
     required dynamic value,
   }) async {
     final Box stateBox = await Hive.openBox('stateBox');
-
     stateBox.put(
       key,
       value,

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todolist/Screens/Home/homepage.dart';
 import 'Screens/Authentication/sign_up_page.dart';
 import 'firebase_options.dart';
 
@@ -19,8 +20,6 @@ void main() async {
 
   runApp(const ToDoList());
 }
-
-
 
 class ToDoList extends StatefulWidget {
   const ToDoList({Key? key}) : super(key: key);
@@ -54,7 +53,7 @@ class _ToDoListState extends State<ToDoList> {
           ? ThemeMode.light
           : ThemeMode.dark,
       builder: EasyLoading.init(),
-      home: SignUpPage(
+      home: Homepage(
         modeAction: GestureDetector(
           onTap: () {
             _basicStates.put("darkLightMode",
@@ -71,13 +70,13 @@ class _ToDoListState extends State<ToDoList> {
             ),
             child: _basicStates.get("darkLightMode") == 1
                 ? const Icon(
-              Icons.light_mode,
-              key: ValueKey("lightMode"),
-            )
+                    Icons.light_mode,
+                    key: ValueKey("lightMode"),
+                  )
                 : const Icon(
-              Icons.dark_mode,
-              key: ValueKey("darkMode"),
-            ),
+                    Icons.dark_mode,
+                    key: ValueKey("darkMode"),
+                  ),
           ),
         ),
       ),

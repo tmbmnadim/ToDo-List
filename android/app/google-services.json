@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:239864358715:android:7d2d3f78c2565a34bd791e",
         "android_client_info": {
-          "package_name": "com.example.portfolioqpp"
+          "package_name": "me.tmbmnadim.todolist"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "239864358715-ece5dp1i7b9iqelnb5maqbq0f6mnu26i.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.portfolioqpp",
+            "package_name": "me.tmbmnadim.todolist",
             "certificate_hash": "ce96d746c6c268cdfd85305f12fc28aa5f51ccf2"
           }
         },
