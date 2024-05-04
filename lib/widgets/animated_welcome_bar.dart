@@ -108,9 +108,9 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
 
   Color timeDayColor({isBorder = false}) {
     if (widget.dayStatus == "Good Morning") {
-      return isBorder ? primaryNight : primaryDay;
+      return isBorder ? primaryNight : secondaryColorDay;
     } else {
-      return isBorder ? primaryDay : primaryNight;
+      return isBorder ? secondaryColorDay : primaryNight;
     }
   }
 

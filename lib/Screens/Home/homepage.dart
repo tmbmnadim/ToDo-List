@@ -1,8 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hive/hive.dart';
 import 'package:todolist/widgets/animated_welcome_bar.dart';
 import 'package:todolist/widgets/app_theme.dart';
+import 'package:todolist/widgets/custom_icon_button.dart';
+import 'package:todolist/widgets/custom_methods.dart';
+import 'package:todolist/widgets/custom_text_button.dart';
+import 'package:todolist/widgets/date_list.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({
@@ -37,11 +42,11 @@ class _HomepageState extends State<Homepage> {
               decoration: BoxDecoration(
                 border: Border.symmetric(
                   horizontal: BorderSide(
-                    color: isDay ? primaryNight : primaryDay,
+                    color: isDay ? primaryNight : secondaryColorDay,
                     width: 8,
                   ),
                   vertical: BorderSide(
-                    color: isDay ? primaryNight : primaryDay,
+                    color: isDay ? primaryNight : secondaryColorDay,
                     width: 4,
                   ),
                 ),
@@ -50,19 +55,62 @@ class _HomepageState extends State<Homepage> {
                 dayStatus: isDay ? "Good Morning" : "Good Night",
               ),
             ),
-            Container(
-              color: Colors.red,
-              height: scrSize.height * 0.1,
+            SizedBox(
+              height: scrSize.height * 0.08,
               width: scrSize.width,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CustomIconButton(
+                      height: scrSize.height * 0.08,
+                      backgroundColor: primaryColorDay,
+                      icon: Icons.arrow_back_ios,
+                      onPressed: () {},
+                    ),
+                  ),
+                  const SizedBox(width: 1),
+                  Expanded(
+                    flex: 4,
+                    child: Container(
+                      color: primaryColorDay,
+                      height: scrSize.height * 0.08,
+                      child: const Center(
+                        child: Text(
+                          "All Tasks",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 1),
+                  Expanded(
+                    child: CustomIconButton(
+                      height: scrSize.height * 0.08,
+                      backgroundColor: primaryColorDay,
+                      icon: Icons.arrow_forward_ios,
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Container(
-              color: Colors.blue,
-              height: scrSize.height * 0.1,
+            DateListButtons(
+              height: scrSize.height * 0.12,
               width: scrSize.width,
+              dates: getDaysInMonth(DateTime.now()),
+              onTap: (index) {},
             ),
-            Container(
-              color: Colors.red,
-              height: scrSize.height * 0.5 + 9,
+            const Divider(
+              color: primaryColorDay,
+              height: 2,
+              thickness: 2,
+            ),
+            SizedBox(
+              height: scrSize.height * 0.5 + 7,
               width: scrSize.width,
             ),
           ],
