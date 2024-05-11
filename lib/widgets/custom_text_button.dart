@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/widgets/app_theme.dart';
+import 'package:todolist/app_theme.dart';
 import 'package:todolist/widgets/custom_button.dart';
 
 class CustomTextButton extends StatelessWidget {
@@ -7,10 +7,12 @@ class CustomTextButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onTap,
-    this.color =  primaryColorDay,
+    this.color = Colors.white,
     this.textColor,
     this.splashColor = Colors.white24,
     this.borderColor = Colors.transparent,
+    this.borderRadius = 10,
+    this.borderRadiusValue,
     this.borderWidth = 0,
     this.fontSize = 16,
     this.width = 350,
@@ -21,6 +23,8 @@ class CustomTextButton extends StatelessWidget {
   final Color? textColor;
   final Color splashColor;
   final Color borderColor;
+  final double borderRadius;
+  final BorderRadius? borderRadiusValue;
   final double borderWidth;
   final double fontSize;
   final double width;
@@ -43,16 +47,17 @@ class CustomTextButton extends StatelessWidget {
       color: color,
       borderColor: borderColor,
       borderWidth: borderWidth,
+      borderRadius: borderRadius,
+      borderRadiusValue: borderRadiusValue,
       splashColor: splashColor,
       onTap: onTap,
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: textColor ?? invert(color),
-          fontSize: fontSize,
-          fontWeight: FontWeight.w700
-        ),
+            color: textColor ?? invert(color),
+            fontSize: fontSize,
+            fontWeight: FontWeight.w700),
       ),
     );
   }

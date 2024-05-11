@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todolist/Screens/Home/homepage.dart';
+
+import 'app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,11 +23,15 @@ class ToDoList extends StatefulWidget {
 class _ToDoListState extends State<ToDoList> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "ToDo List",
-      builder: EasyLoading.init(),
-      home: const Homepage(),
+    return ProviderScope(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: "ToDo List",
+        theme: appTheme,
+        themeMode: ThemeMode.light,
+        builder: EasyLoading.init(),
+        home: const Homepage(),
+      ),
     );
   }
 }

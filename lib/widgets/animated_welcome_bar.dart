@@ -1,12 +1,17 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:todolist/widgets/app_theme.dart';
+import 'package:todolist/app_theme.dart';
 import 'dart:core';
 
 class AnimatedWelcomeBar extends StatefulWidget {
   final String dayStatus;
-  const AnimatedWelcomeBar({super.key, required this.dayStatus});
+  final double height;
+  const AnimatedWelcomeBar({
+    super.key,
+    required this.height,
+    required this.dayStatus,
+  });
 
   @override
   State<AnimatedWelcomeBar> createState() => _AnimatedWelcomeBarState();
@@ -108,9 +113,9 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
 
   Color timeDayColor({isBorder = false}) {
     if (widget.dayStatus == "Good Morning") {
-      return isBorder ? primaryNight : secondaryColorDay;
+      return isBorder ? primaryColorDark : secondaryColorDay;
     } else {
-      return isBorder ? secondaryColorDay : primaryNight;
+      return isBorder ? secondaryColorDay : primaryColorDark;
     }
   }
 
@@ -135,7 +140,7 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
           children: [
             Container(
               color: timeDayColor(),
-              height: scrSize.height * 0.2,
+              height: widget.height,
               width: scrSize.width,
               child: Transform.translate(
                 offset: Offset((scrSize.width * 0.5) * inAnimation.value, 0),

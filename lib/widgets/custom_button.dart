@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
-   const CustomButton({
+  const CustomButton({
     super.key,
     required this.child,
     required this.onTap,
@@ -10,6 +10,7 @@ class CustomButton extends StatelessWidget {
     this.borderColor = Colors.white,
     this.borderWidth = 0,
     this.borderRadius = 10,
+    this.borderRadiusValue,
     this.width = 350,
     this.height = 60,
     this.decorationImage,
@@ -22,6 +23,7 @@ class CustomButton extends StatelessWidget {
   final Color borderColor;
   final double borderWidth;
   final double borderRadius;
+  final BorderRadius? borderRadiusValue;
   final double width;
   final double height;
   final DecorationImage? decorationImage;
@@ -30,11 +32,11 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(borderRadius),
+      borderRadius: borderRadiusValue ?? BorderRadius.circular(borderRadius),
       child: InkWell(
         onTap: onTap,
         splashColor: splashColor,
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: borderRadiusValue ?? BorderRadius.circular(borderRadius),
         child: Ink(
           width: width,
           height: height,
@@ -44,7 +46,8 @@ class CustomButton extends StatelessWidget {
               color: borderColor,
               width: borderWidth,
             ),
-            borderRadius: BorderRadius.circular(borderRadius),
+            borderRadius:
+                borderRadiusValue ?? BorderRadius.circular(borderRadius),
             image: decorationImage,
           ),
           child: Center(

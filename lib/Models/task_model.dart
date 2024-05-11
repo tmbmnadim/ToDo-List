@@ -24,6 +24,24 @@ class TaskModel {
     isOnline = json['isOnline'];
   }
 
+  TaskModel copyWith({
+    String? title,
+    String? details,
+    String? creationTime,
+    String? dueDate,
+    bool? pinned,
+    bool? isOnline,
+  }) {
+    return TaskModel(
+      title: title ?? this.title,
+      details: details ?? this.details,
+      creationTime: creationTime ?? this.creationTime,
+      dueDate: dueDate ?? this.dueDate,
+      pinned: pinned ?? this.pinned,
+      isOnline: isOnline ?? this.isOnline,
+    );
+  }
+
   Map<String, dynamic> toJson() => <String, dynamic>{
         'title': title,
         'details': details,
