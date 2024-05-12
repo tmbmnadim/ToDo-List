@@ -1,29 +1,34 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
-import 'package:todolist/widgets/animated_welcome_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todolist/Models/task_model.dart';
+import 'package:todolist/Sources/task_source.dart';
+import 'package:todolist/State/task_state.dart';
+import 'package:todolist/State/task_state_model.dart';
 import 'package:todolist/app_theme.dart';
-import 'package:todolist/widgets/create_delete_task_buttons.dart';
-import 'package:todolist/widgets/custom_icon_button.dart';
-import 'package:todolist/widgets/custom_methods.dart';
-import 'package:todolist/widgets/date_list.dart';
-import 'package:todolist/widgets/month_viewer.dart';
-import 'package:todolist/widgets/task_tile.dart';
+import '../widgets/animated_welcome_bar.dart';
+import '../widgets/create_delete_task_buttons.dart';
+import '../widgets/custom_methods.dart';
+import '../widgets/date_list.dart';
+import '../widgets/month_viewer.dart';
+import '../widgets/task_tile.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({
-    Key? key,
-    // required this.modeAction,
-  }) : super(key: key);
+  const Homepage({super.key});
 
-  // final Widget modeAction;
   @override
   State<Homepage> createState() => _HomepageState();
 }
 
 class _HomepageState extends State<Homepage> {
   bool isDay = false;
+  TaskModel task = TaskModel(
+    title: "title",
+    details: "details",
+    creationTime: DateTime.now().millisecondsSinceEpoch,
+    dueDate: DateTime(2024, 5, 15, 13, 30).millisecondsSinceEpoch,
+    pinned: false,
+    isOnline: true,
+  );
   @override
   Widget build(BuildContext context) {
     primaryColorDefiner(isDay);
@@ -72,13 +77,22 @@ class _HomepageState extends State<Homepage> {
                 dayStatus: isDay ? "Good Morning" : "Good Night",
               ),
             ),
-            MonthViewer(
-              height: 80,
-              monthText: "Month Name",
-              color: primaryColor,
-              width: scrSize.width,
-              onLeft: () {},
-              onRight: () {},
+            Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                TaskStateModel dataGetter = ref.watch(taskState);
+                return MonthViewer(
+                  height: 80,
+                  monthText: "Month Name ${dataGetter.testVar}",
+                  color: primaryColor,
+                  width: scrSize.width,
+                  onLeft: () async {
+                    TaskSourceLocal().saveTaskLocal(task);
+                  },
+                  onRight: () async {
+                    print(await TaskSourceLocal().getTasksLocal(0));
+                  },
+                );
+              },
             ),
             DateListButtons(
               height: 80,
@@ -86,7 +100,9 @@ class _HomepageState extends State<Homepage> {
               color: primaryColor,
               borderColor: isDay ? primaryColorDark : secondaryColorDay,
               daysInMonth: getDaysInMonth(DateTime.now()),
-              onTap: (index) {},
+              onTap: (index) async {
+                await TaskSourceLocal().deleteTaskLocal(task);
+              },
             ),
             Divider(
               color: primaryColor,

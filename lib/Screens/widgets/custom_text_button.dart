@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/app_theme.dart';
-import 'package:todolist/widgets/custom_button.dart';
+
+import 'custom_button.dart';
 
 class CustomTextButton extends StatelessWidget {
   const CustomTextButton({

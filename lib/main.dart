@@ -4,23 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todolist/Screens/Home/homepage.dart';
 
+import 'Models/task_model.dart';
 import 'app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+  Hive.registerAdapter(TaskModelAdapter());
 
   runApp(const ToDoList());
 }
 
-class ToDoList extends StatefulWidget {
+class ToDoList extends StatelessWidget {
   const ToDoList({Key? key}) : super(key: key);
 
-  @override
-  State<ToDoList> createState() => _ToDoListState();
-}
-
-class _ToDoListState extends State<ToDoList> {
   @override
   Widget build(BuildContext context) {
     return ProviderScope(

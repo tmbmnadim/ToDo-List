@@ -1,3 +1,8 @@
+import 'package:hive/hive.dart';
+
+part 'task_model.g.dart';
+
+@HiveType(typeId: 0)
 class TaskModel {
   TaskModel({
     required this.title,
@@ -8,11 +13,17 @@ class TaskModel {
     required this.isOnline,
   });
 
+  @HiveField(0)
   late String title;
+  @HiveField(1)
   late String details;
-  late String creationTime;
-  late String dueDate;
+  @HiveField(2)
+  late int creationTime;
+  @HiveField(3)
+  late int dueDate;
+  @HiveField(4)
   late bool pinned;
+  @HiveField(5)
   late bool isOnline;
 
   TaskModel.fromJson({required Map<String, dynamic> json}) {
@@ -27,8 +38,8 @@ class TaskModel {
   TaskModel copyWith({
     String? title,
     String? details,
-    String? creationTime,
-    String? dueDate,
+    int? creationTime,
+    int? dueDate,
     bool? pinned,
     bool? isOnline,
   }) {
