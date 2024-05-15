@@ -1,28 +1,14 @@
 import 'package:flutter/material.dart';
 
-void primaryColorDefiner(bool lightTheme) {
-  if (lightTheme) {
-    primaryColor = primaryColorLight;
-  } else {
-    primaryColor = primaryColorDark;
-  }
-}
-
-// Main Colors
-Color primaryColor = const Color(0xff009688);
-
 // Night Colors
-const Color primaryColorDark = Color(0xff1e1433);
-const Color secondaryColorNight = Color(0xff262331);
+const Color darkModePrimaryDark = Color(0xff0e051a);
+const Color darkModePrimary = Color(0xff1e1433);
+const Color darkModePrimaryLight = Color(0xff262331);
 
 // Day Colors
-const Color primaryColorLight = Color(0xff009688);
-const Color secondaryColorDay = Color(0xff5cd4ce);
-
-ThemeData appTheme = ThemeData(
-  brightness: Brightness.light,
-  textTheme: todoTextTheme,
-);
+Color lightModePrimaryDark = Colors.teal.shade700;
+Color lightModePrimary = Colors.teal;
+Color lightModePrimaryLight = Colors.teal.shade200;
 
 TextTheme todoTextTheme = const TextTheme(
   displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),

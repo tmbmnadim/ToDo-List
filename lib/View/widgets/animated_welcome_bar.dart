@@ -53,11 +53,13 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
     }
   }
 
-  Icon timeIconChange() {
+  Icon timeIconChange(BuildContext context) {
     if (widget.dayStatus == "Good Morning") {
-      return const Icon(
+      return Icon(
         Icons.sunny,
-        color: Colors.amber,
+        color: Theme.of(context).brightness == Brightness.light
+            ? Colors.amber
+            : Colors.amber.shade600,
         size: 150,
       );
     } else {
@@ -69,11 +71,13 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
     }
   }
 
-  Widget timeTextChange() {
+  Widget timeTextChange(BuildContext context) {
     if (widget.dayStatus == "Good Morning") {
       return Container(
         decoration: BoxDecoration(
-          color: Colors.amber,
+          color: Theme.of(context).brightness == Brightness.light
+              ? Colors.amber
+              : Colors.amber.shade600,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
@@ -113,26 +117,15 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
 
   Color timeDayColor({isBorder = false}) {
     if (widget.dayStatus == "Good Morning") {
-      return isBorder ? primaryColorDark : secondaryColorDay;
+      return isBorder ? darkModePrimary : Theme.of(context).primaryColorLight;
     } else {
-      return isBorder ? secondaryColorDay : primaryColorDark;
+      return isBorder ? lightModePrimaryLight : darkModePrimary;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     Size scrSize = MediaQuery.of(context).size;
-
-    // setState(() {
-    //   inAnimation = Tween<double>(begin: 0, end: 2).animate(
-    //     CurvedAnimation(
-    //       parent: dayNightAnimeController,
-    //       curve: Curves.easeInOut,
-    //     ),
-    //   );
-    //   dayNightAnimeController.reset();
-    //   dayNightAnimeController.forward();
-    // });
     return AnimatedBuilder(
       animation: dayNightAnimeController,
       builder: (BuildContext context, Widget? child) {
@@ -146,7 +139,7 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
                 offset: Offset((scrSize.width * 0.5) * inAnimation.value, 0),
                 child: Transform.rotate(
                   angle: (360 * rotationAnime.value) * (pi / 180),
-                  child: timeIconChange(),
+                  child: timeIconChange(context),
                 ),
               ),
             ),
@@ -157,7 +150,7 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
                 child: Transform.rotate(
                   angle: (-20 * (1 - animationLastBit(rotationAnime.value))) *
                       (pi / 180),
-                  child: timeTextChange(),
+                  child: timeTextChange(context),
                 ),
               ),
             ),

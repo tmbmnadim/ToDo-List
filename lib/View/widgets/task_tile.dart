@@ -30,8 +30,10 @@ class _TaskTileState extends State<TaskTile> {
       collapsedShape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      collapsedBackgroundColor: widget.isOnline ? primaryColor : Colors.grey,
-      backgroundColor: widget.isOnline ? primaryColor : Colors.grey,
+      collapsedBackgroundColor:
+          widget.isOnline ? Theme.of(context).primaryColor : Colors.grey,
+      backgroundColor:
+          widget.isOnline ? Theme.of(context).primaryColor : Colors.grey,
       iconColor: Colors.white,
       collapsedIconColor: Colors.white,
       expandedAlignment: Alignment.centerLeft,

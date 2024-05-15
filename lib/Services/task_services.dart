@@ -1,10 +1,10 @@
 import 'package:hive/hive.dart';
 import 'package:todolist/Models/task_model.dart';
 
-class TaskSourceLocal {
-  TaskSourceLocal();
+class TaskServices {
+  TaskServices();
 
-  Future<List<TaskModel>> getTasksLocal(int lastIndex) async {
+  Future<List<TaskModel>> getTasksLocal() async {
     List<TaskModel> tasks = [];
 
     Box taskBox = await Hive.openBox<TaskModel>("tasks");
@@ -12,7 +12,6 @@ class TaskSourceLocal {
     Map<dynamic, dynamic> tasksMap = taskBox.toMap();
     if (tasksMap.isNotEmpty) {
       for (int i = 0; i < tasksMap.length; i++) {
-        print(tasksMap);
         tasks.add(tasksMap[0]);
       }
     }
@@ -23,12 +22,12 @@ class TaskSourceLocal {
   Future<void> saveTaskLocal(TaskModel task) async {
     Box taskBox = await Hive.openBox<TaskModel>("tasks");
 
-    await taskBox.put(task.creationTime, task);
+    await taskBox.put(task.creationTime.toString(), task);
   }
 
   Future<void> deleteTaskLocal(TaskModel task) async {
     Box taskBox = await Hive.openBox<TaskModel>("tasks");
 
-    await taskBox.delete(task.creationTime);
+    await taskBox.delete(task.creationTime.toString());
   }
 }
