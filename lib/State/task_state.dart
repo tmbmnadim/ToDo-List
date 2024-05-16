@@ -4,10 +4,13 @@ import 'package:todolist/Services/task_services.dart';
 
 final FutureProvider<List<TaskModel>> taskStateGetTasks =
     FutureProvider<List<TaskModel>>(
-        (ref) async => TaskServices().getTasksLocal());
+        (ref) async => await TaskServices().getTasksLocal());
 
-taskStateSaveTask(TaskModel task) =>
-    FutureProvider((ref) => TaskServices().saveTaskLocal(task));
+taskStateCreateTask(TaskModel task) =>
+    FutureProvider((ref) => TaskServices().createTaskLocal(task));
 
 taskStateDeleteTask(TaskModel task) =>
     FutureProvider((ref) => TaskServices().deleteTaskLocal(task));
+
+taskStateDeleteListTask(List<TaskModel> tasks) =>
+    FutureProvider((ref) => TaskServices().deleteListTaskLocal(tasks));

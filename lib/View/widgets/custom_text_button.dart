@@ -7,15 +7,17 @@ class CustomTextButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onTap,
-    this.color = Colors.white,
     this.textColor,
+    this.color = Colors.white,
     this.splashColor = Colors.white24,
     this.borderColor = Colors.transparent,
+    this.textAlign = TextAlign.center,
+    this.disableTextPadding = false,
     this.borderRadius = 10,
-    this.borderRadiusValue,
     this.borderWidth = 0,
     this.fontSize = 16,
     this.width = 350,
+    this.borderRadiusValue,
     this.height,
   });
   final Function() onTap;
@@ -25,11 +27,13 @@ class CustomTextButton extends StatelessWidget {
   final Color borderColor;
   final double borderRadius;
   final BorderRadius? borderRadiusValue;
+  final TextAlign textAlign;
   final double borderWidth;
   final double fontSize;
   final double width;
   final double? height;
   final String text;
+  final bool disableTextPadding;
 
   Color invert(Color color) {
     final r = 255 - color.red;
@@ -51,13 +55,22 @@ class CustomTextButton extends StatelessWidget {
       borderRadiusValue: borderRadiusValue,
       splashColor: splashColor,
       onTap: onTap,
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            color: textColor ?? invert(color),
-            fontSize: fontSize,
-            fontWeight: FontWeight.w700),
+      child: Padding(
+        padding: disableTextPadding
+            ? EdgeInsets.zero
+            : const EdgeInsets.symmetric(horizontal: 16.0),
+        child: SizedBox(
+          width: width,
+          child: Text(
+            text,
+            textAlign: textAlign,
+            style: TextStyle(
+              color: textColor,
+              fontSize: fontSize,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
       ),
     );
   }

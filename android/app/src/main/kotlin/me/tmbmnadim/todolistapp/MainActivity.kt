@@ -1,4 +1,4 @@
-package me.tmbmnadim.todolist
+package me.tmbmnadim.todolistapp
 
 import io.flutter.embedding.android.FlutterActivity
 

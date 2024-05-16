@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todolist/State/task_state.dart';
 import 'package:todolist/State/theme_notifier.dart';
 
 import 'Models/task_model.dart';
@@ -30,6 +31,7 @@ class _ToDoListState extends ConsumerState<ToDoList> {
   Widget build(BuildContext context) {
     if (isFirstTime) {
       ref.read(themeNotifier.notifier).getTheme();
+      ref.read(taskStateGetTasks);
       isFirstTime = false;
     }
     ThemeMode themeMode = ref.watch(themeNotifier);
@@ -39,6 +41,7 @@ class _ToDoListState extends ConsumerState<ToDoList> {
       themeMode: themeMode,
       theme: ThemeData(
         brightness: Brightness.light,
+        appBarTheme: appBarTheme,
         primaryColor: lightModePrimary,
         primaryColorDark: lightModePrimaryDark,
         primaryColorLight: lightModePrimaryLight,
