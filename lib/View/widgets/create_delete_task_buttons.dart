@@ -44,7 +44,7 @@ class CreateDeleteTaskButtons extends StatelessWidget {
           const SizedBox(width: 50),
           Expanded(
             child: CustomTextButton(
-              text: "Delete Task",
+              text: "Delete All Task",
               color: color,
               borderRadiusValue: const BorderRadius.only(
                 bottomLeft: Radius.circular(20),

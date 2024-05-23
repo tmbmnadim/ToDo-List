@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:todolist/app_theme.dart';
 
 class TaskTile extends StatefulWidget {
   final String title;
@@ -53,7 +52,11 @@ class _TaskTileState extends State<TaskTile> {
             child: Text(
               widget.title,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           Expanded(
@@ -61,7 +64,11 @@ class _TaskTileState extends State<TaskTile> {
             child: Text(
               "Created on: ${DateFormat("dd LLL").format(widget.creationTime)}",
               textAlign: TextAlign.end,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12.0,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
         ],
@@ -69,13 +76,21 @@ class _TaskTileState extends State<TaskTile> {
       subtitle: Text(
         "Due Date: ${DateFormat("dd LLL").format(DateTime.now())} at ${DateFormat("hh:mm a").format(widget.dueDate)}",
         overflow: TextOverflow.ellipsis,
-        style: Theme.of(context).textTheme.bodyMedium,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 14.0,
+          fontWeight: FontWeight.w400,
+        ),
       ),
       onExpansionChanged: (isExpanded) {},
       children: [
         Text(
           widget.details,
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14.0,
+            fontWeight: FontWeight.w400,
+          ),
         )
       ],
     );

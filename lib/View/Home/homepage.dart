@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:todolist/Models/task_model.dart';
-import 'package:todolist/State/theme_notifier.dart';
+import 'package:todolist/View%20Model/theme_notifier.dart';
 import 'package:todolist/View/create_new_task.dart';
-import 'package:todolist/View/widgets/custom_text_button.dart';
 import 'package:todolist/View/widgets/delete_task_dialog.dart';
-import '../../State/date_state.dart';
-import '../../State/task_state.dart';
+import '../../View Model/date_state.dart';
+import '../../View Model/task_state.dart';
 import '../widgets/animated_welcome_bar.dart';
 import '../widgets/create_delete_task_buttons.dart';
 import '../widgets/custom_methods.dart';
@@ -21,10 +20,8 @@ class Homepage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Size scrSize = MediaQuery.of(context).size;
-    List<TaskModel> allTasks = [];
 
-    DateTime selectedDate = ref.watch(dateState);
-    AsyncValue<List<TaskModel>> allTaskListener = ref.watch(taskStateGetTasks);
+    List<TaskModel> allTasksAre = ref.watch(taskNotifier);
 
     DateTimeState dateTimeStateController = ref.read(dateState.notifier);
     return Scaffold(
@@ -75,7 +72,7 @@ class Homepage extends ConsumerWidget {
             ),
             MonthViewer(
               height: 80,
-              monthText: DateFormat("LLLL").format(selectedDate),
+              monthText: DateFormat("LLLL").format(ref.watch(dateState)),
               color: Theme.of(context).primaryColor,
               width: scrSize.width,
               onLeft: () {
@@ -90,12 +87,16 @@ class Homepage extends ConsumerWidget {
               width: scrSize.width,
               color: Theme.of(context).primaryColor,
               borderColor: Theme.of(context).primaryColorLight,
-              daysInMonth: getDaysInMonth(selectedDate),
+              daysInMonth: getDaysInMonth(ref.watch(dateState)),
               onTap: (index) {
                 if (index != 0) {
                   dateTimeStateController.selectDay(index);
+                  ref
+                      .read(taskNotifier.notifier)
+                      .getTasksOfDateLocalNotifier(ref.watch(dateState));
                 } else {
                   dateTimeStateController.selectDay(DateTime.now().day);
+                  ref.read(taskNotifier.notifier).getTasksLocalNotifier();
                 }
               },
             ),
@@ -107,56 +108,27 @@ class Homepage extends ConsumerWidget {
             Expanded(
               child: Stack(
                 children: [
-                  allTaskListener.when(
-                    data: (allTasksAre) {
-                      if (selectedDate.isAfter(DateTime.now())) {
-                        allTasks.addAll(
-                          allTasksAre.where(
-                            (element) => DateTime.fromMillisecondsSinceEpoch(
-                                    element.dueDate)
-                                .isAfter(selectedDate),
+                  ListView.builder(
+                    itemCount: allTasksAre.length + 1,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return const SizedBox(height: 60);
+                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TaskTile(
+                            title: allTasksAre[index - 1].title,
+                            details: allTasksAre[index - 1].details,
+                            creationTime: DateTime.fromMicrosecondsSinceEpoch(
+                                allTasksAre[index - 1].creationTime),
+                            dueDate: DateTime.fromMicrosecondsSinceEpoch(
+                                allTasksAre[index - 1].dueDate),
+                            pinned: allTasksAre[index - 1].pinned,
+                            isOnline: allTasksAre[index - 1].isOnline,
                           ),
                         );
-                      } else {
-                        allTasks.addAll(allTasksAre);
                       }
-                      return ListView.builder(
-                        itemCount: allTasks.length + 1,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          if (index == 0) {
-                            return const SizedBox(height: 60);
-                          } else {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TaskTile(
-                                title: allTasks[index - 1].title,
-                                details: allTasks[index - 1].details,
-                                creationTime:
-                                    DateTime.fromMicrosecondsSinceEpoch(
-                                        allTasks[index - 1].creationTime),
-                                dueDate: DateTime.fromMicrosecondsSinceEpoch(
-                                    allTasks[index - 1].dueDate),
-                                pinned: allTasks[index - 1].pinned,
-                                isOnline: allTasks[index - 1].isOnline,
-                              ),
-                            );
-                          }
-                        },
-                      );
-                    },
-                    error: (error, s) {
-                      return Center(
-                        child: Text(
-                          error.toString(),
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      );
-                    },
-                    loading: () {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
                     },
                   ),
                   CreateDeleteTaskButtons(
@@ -175,7 +147,10 @@ class Homepage extends ConsumerWidget {
                         builder: (context) {
                           return DeleteTaskDialog(
                             onDelete: () {
-                              ref.read(taskStateDeleteListTask(allTasks));
+                              ref
+                                  .read(taskNotifier.notifier)
+                                  .deleteListTaskLocalNotifier(allTasksAre);
+                              Navigator.pop(context);
                             },
                           );
                         },
@@ -189,5 +164,19 @@ class Homepage extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  List<TaskModel> taskOfDate(
+      DateTime selectedDate, List<TaskModel> allTasksAre) {
+    if (selectedDate.isAfter(DateTime.now())) {
+      return allTasksAre
+          .where(
+            (element) => DateTime.fromMillisecondsSinceEpoch(element.dueDate)
+                .isAfter(selectedDate),
+          )
+          .toList();
+    } else {
+      return allTasksAre;
+    }
   }
 }

@@ -6,14 +6,14 @@ class ThemeServices {
   ThemeServices();
 
   Future<ThemeMode> getTheme() async {
-    ThemeMode themeMode = ThemeMode.dark;
+    ThemeMode themeMode = ThemeMode.system;
     try {
       Box taskBox = await Hive.openBox<String>("theme");
 
-      String themeModeString = taskBox.get("themeMode");
-      if (themeModeString == "light") {
+      String? themeModeString = await taskBox.get("themeMode");
+      if (themeModeString != null && themeModeString == "light") {
         themeMode = ThemeMode.light;
-      } else if (themeModeString == "dark") {
+      } else if (themeModeString != null && themeModeString == "dark") {
         themeMode = ThemeMode.dark;
       }
     } catch (e) {

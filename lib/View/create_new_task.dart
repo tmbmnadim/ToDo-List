@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:todolist/Models/task_model.dart';
-import 'package:todolist/State/task_state.dart';
+import 'package:todolist/View%20Model/task_state.dart';
 import 'package:todolist/View/widgets/custom_text_button.dart';
 import 'package:todolist/View/widgets/custom_text_field.dart';
 
@@ -120,8 +120,9 @@ class _CreateNewTaskState extends ConsumerState<CreateNewTask> {
                         pinned: false,
                         isOnline: true,
                       );
-                      ref.read(taskStateCreateTask(task));
-                      ref.read(taskStateGetTasks);
+                      ref
+                          .read(taskNotifier.notifier)
+                          .createTaskLocalNotifier(task);
                       Navigator.pop(context);
                     }
                   },
@@ -161,6 +162,8 @@ class _CreateNewTaskState extends ConsumerState<CreateNewTask> {
       initialTime: selectedTime,
     );
     selectedTime = tempTime!;
-    dueTimeController.text = selectedTime.format(context);
+    if (context.mounted) {
+      dueTimeController.text = selectedTime.format(context);
+    }
   }
 }

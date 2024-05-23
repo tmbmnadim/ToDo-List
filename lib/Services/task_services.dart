@@ -23,8 +23,9 @@ class TaskServices {
     Box taskBox = await Hive.openBox<TaskModel>("tasks");
 
     await taskBox.put(task.creationTime.toString(), task).then((value) {
-      Future.delayed(const Duration(seconds: 1))
-          .then((value) => EasyLoading.dismiss());
+      Future.delayed(const Duration(seconds: 1)).then((value) {
+        EasyLoading.dismiss();
+      });
     });
   }
 
