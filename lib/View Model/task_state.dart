@@ -40,4 +40,23 @@ class TaskNotifier extends Notifier<List<TaskModel>> {
     await TaskServices().deleteListTaskLocal(tasks);
     getTasksLocalNotifier();
   }
+
+  void getTasksArchiveNotifier() async {
+    state = await TaskServices().getTasksArchive();
+  }
+
+  void moveToArchiveNotifier(TaskModel task) async {
+    await TaskServices().moveToArchive(task);
+    getTasksLocalNotifier();
+  }
+
+  void deleteTaskArchiveNotifier(TaskModel task) async {
+    await TaskServices().deleteTaskArchive(task);
+    getTasksArchiveNotifier();
+  }
+
+  void deleteListTaskArchiveNotifier(List<TaskModel> tasks) async {
+    await TaskServices().deleteListTaskArchive(tasks);
+    getTasksArchiveNotifier();
+  }
 }

@@ -23,13 +23,14 @@ class TaskModelAdapter extends TypeAdapter<TaskModel> {
       dueDate: fields[3] as int,
       pinned: fields[4] as bool,
       isOnline: fields[5] as bool,
+      isArchived: (fields[6] ?? false) as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, TaskModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class TaskModelAdapter extends TypeAdapter<TaskModel> {
       ..writeByte(4)
       ..write(obj.pinned)
       ..writeByte(5)
-      ..write(obj.isOnline);
+      ..write(obj.isOnline)
+      ..writeByte(6)
+      ..write(obj.isArchived);
   }
 
   @override

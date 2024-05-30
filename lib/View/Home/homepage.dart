@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:todolist/Models/task_model.dart';
 import 'package:todolist/View%20Model/theme_notifier.dart';
+import 'package:todolist/View/archive_page.dart';
 import 'package:todolist/View/create_new_task.dart';
 import 'package:todolist/View/widgets/delete_task_dialog.dart';
 import '../../View Model/date_state.dart';
@@ -20,6 +21,9 @@ class Homepage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Size scrSize = MediaQuery.of(context).size;
+    double statusBarHeight = MediaQuery.of(context).padding.top;
+
+    ref.read(taskNotifier.notifier).getTasksLocalNotifier();
 
     List<TaskModel> allTasksAre = ref.watch(taskNotifier);
 
@@ -30,6 +34,13 @@ class Homepage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text("ToDo List"),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const ArchivePage()));
+            },
+            icon: const Icon(Icons.archive),
+          ),
           IconButton(
             onPressed: () {
               ref
@@ -46,13 +57,13 @@ class Homepage extends ConsumerWidget {
                   ? Icons.sunny
                   : Icons.nightlight_rounded,
             ),
-          )
+          ),
         ],
         toolbarHeight: kToolbarHeight,
         centerTitle: true,
       ),
       body: SizedBox(
-        height: scrSize.height - kToolbarHeight + 10,
+        height: scrSize.height - statusBarHeight - kToolbarHeight,
         width: scrSize.width,
         child: Column(
           children: [
@@ -108,29 +119,75 @@ class Homepage extends ConsumerWidget {
             Expanded(
               child: Stack(
                 children: [
-                  ListView.builder(
-                    itemCount: allTasksAre.length + 1,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return const SizedBox(height: 60);
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TaskTile(
-                            title: allTasksAre[index - 1].title,
-                            details: allTasksAre[index - 1].details,
-                            creationTime: DateTime.fromMicrosecondsSinceEpoch(
-                                allTasksAre[index - 1].creationTime),
-                            dueDate: DateTime.fromMicrosecondsSinceEpoch(
-                                allTasksAre[index - 1].dueDate),
-                            pinned: allTasksAre[index - 1].pinned,
-                            isOnline: allTasksAre[index - 1].isOnline,
-                          ),
-                        );
-                      }
-                    },
-                  ),
+                  if (allTasksAre.isNotEmpty && !allTasksAre[0].isArchived)
+                    ListView.builder(
+                      itemCount: allTasksAre.length + 1,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return const SizedBox(height: 60);
+                        } else {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TaskTile(
+                              title: allTasksAre[index - 1].title,
+                              details: allTasksAre[index - 1].details,
+                              creationTime: DateTime.fromMicrosecondsSinceEpoch(
+                                  allTasksAre[index - 1].creationTime),
+                              dueDate: DateTime.fromMicrosecondsSinceEpoch(
+                                  allTasksAre[index - 1].dueDate),
+                              pinned: allTasksAre[index - 1].pinned,
+                              isOnline: allTasksAre[index - 1].isOnline,
+                              isArchive: allTasksAre[index - 1].isArchived,
+                              onDelete: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return DeleteTaskDialog(
+                                      title: "Delete Task?",
+                                      buttonTitle: "Delete",
+                                      subTitle: "This task will be removed!",
+                                      buttonColor: Colors.red.shade900,
+                                      onPress: () {
+                                        ref
+                                            .read(taskNotifier.notifier)
+                                            .deleteTaskLocalNotifier(
+                                                allTasksAre[index - 1]);
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                              onMarkDone: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return DeleteTaskDialog(
+                                      title: "Mark Complete?",
+                                      buttonTitle: "Mark Complete",
+                                      subTitle:
+                                          "The task will be moved to archive!",
+                                      onPress: () {
+                                        ref
+                                            .read(taskNotifier.notifier)
+                                            .moveToArchiveNotifier(
+                                                allTasksAre[index - 1]);
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  if (allTasksAre.isNotEmpty && allTasksAre[0].isArchived)
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   CreateDeleteTaskButtons(
                     height: 50,
                     color: Theme.of(context).primaryColor,
@@ -146,7 +203,11 @@ class Homepage extends ConsumerWidget {
                         context: context,
                         builder: (context) {
                           return DeleteTaskDialog(
-                            onDelete: () {
+                            title: "Delete All Tasks?",
+                            buttonTitle: "Delete",
+                            subTitle: "This will DELETE all of the tasks!",
+                            buttonColor: Colors.red.shade900,
+                            onPress: () {
                               ref
                                   .read(taskNotifier.notifier)
                                   .deleteListTaskLocalNotifier(allTasksAre);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:todolist/View/widgets/custom_text_button.dart';
 
 class TaskTile extends StatefulWidget {
   final String title;
@@ -8,6 +9,9 @@ class TaskTile extends StatefulWidget {
   final DateTime dueDate;
   final bool pinned;
   final bool isOnline;
+  final bool isArchive;
+  final Function() onDelete;
+  final Function() onMarkDone;
   const TaskTile({
     super.key,
     required this.title,
@@ -16,6 +20,9 @@ class TaskTile extends StatefulWidget {
     required this.dueDate,
     required this.pinned,
     required this.isOnline,
+    required this.isArchive,
+    required this.onDelete,
+    required this.onMarkDone,
   });
 
   @override
@@ -82,7 +89,7 @@ class _TaskTileState extends State<TaskTile> {
           fontWeight: FontWeight.w400,
         ),
       ),
-      onExpansionChanged: (isExpanded) {},
+      expandedCrossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           widget.details,
@@ -91,7 +98,37 @@ class _TaskTileState extends State<TaskTile> {
             fontSize: 14.0,
             fontWeight: FontWeight.w400,
           ),
-        )
+        ),
+        const SizedBox(height: 20),
+        SizedBox(
+          height: 50,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              if (!widget.isArchive)
+                CustomTextButton(
+                  width: 150,
+                  height: 50,
+                  color: Colors.transparent,
+                  borderColor: Colors.white,
+                  textColor: Colors.white,
+                  borderWidth: 2,
+                  text: "Mark Complete",
+                  onTap: widget.onMarkDone,
+                ),
+              CustomTextButton(
+                width: !widget.isArchive ? 150 : 300,
+                height: 50,
+                color: Colors.transparent,
+                borderColor: Theme.of(context).highlightColor,
+                textColor: Theme.of(context).highlightColor,
+                borderWidth: 2,
+                text: "Delete",
+                onTap: widget.onDelete,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

@@ -11,6 +11,7 @@ class TaskModel {
     required this.dueDate,
     required this.pinned,
     required this.isOnline,
+    required this.isArchived,
   });
 
   @HiveField(0)
@@ -25,6 +26,8 @@ class TaskModel {
   late bool pinned;
   @HiveField(5)
   late bool isOnline;
+  @HiveField(6)
+  late bool isArchived;
 
   TaskModel.fromJson({required Map<String, dynamic> json}) {
     title = json['title'];
@@ -33,6 +36,7 @@ class TaskModel {
     dueDate = json['dueDate'];
     pinned = json['pinned'];
     isOnline = json['isOnline'];
+    isArchived = json['isArchived'];
   }
 
   TaskModel copyWith({
@@ -42,6 +46,7 @@ class TaskModel {
     int? dueDate,
     bool? pinned,
     bool? isOnline,
+    bool? isArchived,
   }) {
     return TaskModel(
       title: title ?? this.title,
@@ -50,6 +55,7 @@ class TaskModel {
       dueDate: dueDate ?? this.dueDate,
       pinned: pinned ?? this.pinned,
       isOnline: isOnline ?? this.isOnline,
+      isArchived: isArchived ?? this.isArchived,
     );
   }
 
@@ -60,5 +66,6 @@ class TaskModel {
         'dueDate': dueDate,
         'pinned': pinned,
         'isOnline': isOnline,
+        'isArchived': isArchived,
       };
 }

@@ -44,4 +44,46 @@ class TaskServices {
 
     await taskBox.deleteAll(taskKeys);
   }
+
+  Future<List<TaskModel>> getTasksArchive() async {
+    List<TaskModel> tasks = [];
+
+    Box taskArchiveBox = await Hive.openBox<TaskModel>("tasksArchive");
+
+    Map<dynamic, dynamic> tasksArchiveMap = taskArchiveBox.toMap();
+    if (tasksArchiveMap.isNotEmpty) {
+      tasks.addAll((tasksArchiveMap.values as Iterable<TaskModel>));
+    }
+
+    return tasks;
+  }
+
+  Future<void> moveToArchive(TaskModel task) async {
+    EasyLoading.show(status: "Moving to archive...");
+    task = task.copyWith(isArchived: true);
+    deleteTaskLocal(task);
+    Box taskArchiveBox = await Hive.openBox<TaskModel>("tasksArchive");
+
+    await taskArchiveBox.put(task.creationTime.toString(), task).then((value) {
+      Future.delayed(const Duration(seconds: 1)).then((value) {
+        EasyLoading.dismiss();
+      });
+    });
+  }
+
+  Future<void> deleteTaskArchive(TaskModel task) async {
+    Box taskArchiveBox = await Hive.openBox<TaskModel>("tasksArchive");
+
+    await taskArchiveBox.delete(task.creationTime.toString());
+  }
+
+  Future<void> deleteListTaskArchive(List<TaskModel> tasks) async {
+    Box taskArchiveBox = await Hive.openBox<TaskModel>("tasksArchive");
+    List<String> taskKeys = [];
+    for (var singleTask in tasks) {
+      taskKeys.add(singleTask.creationTime.toString());
+    }
+
+    await taskArchiveBox.deleteAll(taskKeys);
+  }
 }

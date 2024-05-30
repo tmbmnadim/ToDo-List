@@ -119,6 +119,7 @@ class _CreateNewTaskState extends ConsumerState<CreateNewTask> {
                         dueDate: selectedDate.millisecondsSinceEpoch,
                         pinned: false,
                         isOnline: true,
+                        isArchived: false,
                       );
                       ref
                           .read(taskNotifier.notifier)

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todolist/View%20Model/task_state.dart';
 import 'package:todolist/View%20Model/theme_notifier.dart';
-
 import 'Models/task_model.dart';
 import 'View/Home/homepage.dart';
 import 'app_theme.dart';
@@ -49,6 +48,7 @@ class _ToDoListState extends ConsumerState<ToDoList> {
         primaryColorDark: lightModePrimaryDark,
         primaryColorLight: lightModePrimaryLight,
         canvasColor: darkModePrimaryLight,
+        highlightColor: Colors.red,
         scaffoldBackgroundColor: Colors.white,
         textTheme: todoTextTheme,
       ),
@@ -58,6 +58,7 @@ class _ToDoListState extends ConsumerState<ToDoList> {
         primaryColorDark: darkModePrimaryDark,
         primaryColorLight: darkModePrimaryLight,
         canvasColor: lightModePrimaryDark,
+        highlightColor: Colors.red,
         scaffoldBackgroundColor: const Color.fromARGB(255, 32, 32, 32),
         textTheme: todoTextTheme,
       ),
