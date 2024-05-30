@@ -78,7 +78,6 @@ class Homepage extends ConsumerWidget {
               ),
               child: const AnimatedWelcomeBar(
                 height: 180,
-                dayStatus: "Good Morning",
               ),
             ),
             MonthViewer(
