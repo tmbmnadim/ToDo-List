@@ -38,10 +38,7 @@ class _DateListButtonsState extends State<DateListButtons> {
           if(index == 0){
             if (selectedIndex == index) {
               return Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 4,
-                ),
+                padding: const EdgeInsets.all(4.0),
                 child: CustomTextButton(
                   text: "All",
                   width: widget.height + 20,
@@ -59,7 +56,7 @@ class _DateListButtonsState extends State<DateListButtons> {
               );
             } else {
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                padding: const EdgeInsets.all(4.0),
                 child: CustomTextButton(
                   text: "All",
                   width: widget.height,
@@ -77,10 +74,7 @@ class _DateListButtonsState extends State<DateListButtons> {
           } else{
             if (selectedIndex == index) {
               return Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 4,
-                ),
+                padding: const EdgeInsets.all(4.0),
                 child: CustomTextButton(
                   text: "$index",
                   width: widget.height + 20,
@@ -98,7 +92,7 @@ class _DateListButtonsState extends State<DateListButtons> {
               );
             } else {
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                padding: const EdgeInsets.all(4.0),
                 child: CustomTextButton(
                   text: "$index",
                   width: widget.height,

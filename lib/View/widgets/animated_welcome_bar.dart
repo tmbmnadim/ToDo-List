@@ -22,7 +22,6 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
   late Animation inAnimation;
   late Animation rotationAnime;
   bool isItMorning = true;
-  Duration duration = const Duration(seconds: 1);
   Timer? timer;
 
   @override
@@ -50,8 +49,8 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
   @override
   Widget build(BuildContext context) {
     Size scrSize = MediaQuery.of(context).size;
-    Timer.periodic(duration, (timer) {
-      if (isMorning(TimeOfDay.now()) && !isItMorning) {
+    Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (isMorning(TimeOfDay.now())) {
         inAnimation = Tween<double>(begin: 0, end: 2).animate(
           CurvedAnimation(
             parent: dayNightAnimeController,
@@ -63,7 +62,7 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
           isItMorning = true;
           setState(() {});
         }
-      } else if (isItMorning) {
+      } else {
         inAnimation = Tween<double>(begin: 0, end: 2).animate(
           CurvedAnimation(
             parent: dayNightAnimeController,
@@ -77,12 +76,14 @@ class _AnimatedWelcomeBarState extends State<AnimatedWelcomeBar>
         }
       }
 
-      inAnimation = Tween<double>(begin: -2, end: 0).animate(
-        CurvedAnimation(
-          parent: dayNightAnimeController,
-          curve: Curves.easeInOut,
-        ),
-      );
+      Future.delayed(const Duration(seconds: 2)).whenComplete(() {
+        inAnimation = Tween<double>(begin: -2, end: 0).animate(
+          CurvedAnimation(
+            parent: dayNightAnimeController,
+            curve: Curves.easeInOut,
+          ),
+        );
+      });
     });
     return AnimatedBuilder(
       animation: dayNightAnimeController,

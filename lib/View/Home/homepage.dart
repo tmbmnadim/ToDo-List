@@ -68,7 +68,7 @@ class Homepage extends ConsumerWidget {
         child: Column(
           children: [
             Container(
-              height: 180,
+              height: 200,
               width: scrSize.width,
               decoration: BoxDecoration(
                 border: Border.all(
@@ -76,12 +76,12 @@ class Homepage extends ConsumerWidget {
                   width: 8,
                 ),
               ),
-              child: const AnimatedWelcomeBar(
-                height: 180,
-              ),
+              // child: const AnimatedWelcomeBar(
+              //   height: 200,
+              // ),
             ),
             MonthViewer(
-              height: 80,
+              height: 60,
               monthText: DateFormat("LLLL").format(ref.watch(dateState)),
               color: Theme.of(context).primaryColor,
               width: scrSize.width,
@@ -93,7 +93,7 @@ class Homepage extends ConsumerWidget {
               },
             ),
             DateListButtons(
-              height: 80,
+              height: 60,
               width: scrSize.width,
               color: Theme.of(context).primaryColor,
               borderColor: Theme.of(context).primaryColorLight,
