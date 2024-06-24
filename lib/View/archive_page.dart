@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todolist/Models/task_model.dart';
-import 'package:todolist/View%20Model/task_state.dart';
+import 'package:todolist/Riverpod/task_state.dart';
 import 'package:todolist/View/widgets/custom_text_button.dart';
 import 'package:todolist/View/widgets/delete_task_dialog.dart';
 import 'package:todolist/View/widgets/task_tile.dart';

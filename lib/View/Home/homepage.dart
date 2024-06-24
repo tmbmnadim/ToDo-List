@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:todolist/Models/task_model.dart';
-import 'package:todolist/View%20Model/theme_notifier.dart';
+import 'package:todolist/Riverpod/theme_notifier.dart';
 import 'package:todolist/View/archive_page.dart';
 import 'package:todolist/View/create_new_task.dart';
 import 'package:todolist/View/widgets/delete_task_dialog.dart';
-import '../../View Model/date_state.dart';
-import '../../View Model/task_state.dart';
+import 'package:todolist/View/widgets/welcom_static_bg.dart';
+import '../../Riverpod/date_state.dart';
+import '../../Riverpod/task_state.dart';
 import '../widgets/animated_welcome_bar.dart';
 import '../widgets/create_delete_task_buttons.dart';
 import '../widgets/custom_methods.dart';
@@ -67,18 +68,9 @@ class Homepage extends ConsumerWidget {
         width: scrSize.width,
         child: Column(
           children: [
-            Container(
+            WelcomeBGStatic(
               height: 200,
               width: scrSize.width,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Theme.of(context).canvasColor,
-                  width: 8,
-                ),
-              ),
-              // child: const AnimatedWelcomeBar(
-              //   height: 200,
-              // ),
             ),
             MonthViewer(
               height: 60,
