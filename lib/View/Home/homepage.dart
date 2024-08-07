@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:todolist/Models/task_model.dart';
 import 'package:todolist/Riverpod/theme_notifier.dart';
 import 'package:todolist/View/archive_page.dart';
 import 'package:todolist/View/create_new_task.dart';
+import 'package:todolist/View/widgets/custom_text_button.dart';
 import 'package:todolist/View/widgets/delete_task_dialog.dart';
+import 'package:todolist/View/widgets/show_lottie.dart';
 import 'package:todolist/View/widgets/welcom_static_bg.dart';
 import '../../Riverpod/date_state.dart';
 import '../../Riverpod/task_state.dart';
-import '../widgets/animated_welcome_bar.dart';
 import '../widgets/create_delete_task_buttons.dart';
 import '../widgets/custom_methods.dart';
 import '../widgets/date_list.dart';
@@ -72,6 +74,7 @@ class Homepage extends ConsumerWidget {
               height: 200,
               width: scrSize.width,
             ),
+            // const ShowLottie(),
             MonthViewer(
               height: 60,
               monthText: DateFormat("LLLL").format(ref.watch(dateState)),

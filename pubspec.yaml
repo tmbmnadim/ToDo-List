@@ -17,7 +17,15 @@ dependencies:
   hive_flutter: ^1.1.0
   flutter_easyloading: ^3.0.5
   flutter_riverpod: ^2.5.1
+  flutter_local_notifications: ^17.2.1+2
+  lottie: ^3.1.2
+  flutter_native_splash: ^2.4.0
 
+flutter_native_splash:
+  color: "#000000"
+  image: assets/todo.png
+  android_12:
+    image: assets/todo.png
 
 dev_dependencies:
   flutter_test:
@@ -38,3 +46,4 @@ flutter:
     - family: MNCustomIcons
       fonts:
         - asset: fonts/MNCustomIcons.ttf
+

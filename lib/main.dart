@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todolist/Riverpod/task_state.dart';
@@ -13,11 +15,23 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(TaskModelAdapter());
 
+  FlutterLocalNotificationsPlugin flnp = FlutterLocalNotificationsPlugin();
+  flnp
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()!
+      .requestNotificationsPermission();
+
+  const AndroidInitializationSettings android =
+      AndroidInitializationSettings("@mipmap/ic_launcher");
+
+  flnp.initialize(const InitializationSettings(
+    android: android,
+  ));
+
   runApp(const ProviderScope(child: ToDoList()));
 }
 
 class ToDoList extends ConsumerStatefulWidget {
-  // final ThemeMode? themeMode;
   const ToDoList({super.key});
 
   @override
@@ -30,6 +44,8 @@ class _ToDoListState extends ConsumerState<ToDoList> {
   @override
   void initState() {
     super.initState();
+    final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
     ref.read(themeNotifier.notifier).getTheme();
     ref.read(taskNotifier.notifier).getTasksLocalNotifier();
   }
@@ -37,6 +53,8 @@ class _ToDoListState extends ConsumerState<ToDoList> {
   @override
   Widget build(BuildContext context) {
     ThemeMode themeMode = ref.watch(themeNotifier);
+    FlutterNativeSplash.remove();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "ToDo List",
