@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:lottie/lottie.dart';
 import 'package:todolist/Models/task_model.dart';
 import 'package:todolist/Riverpod/theme_notifier.dart';
 import 'package:todolist/View/archive_page.dart';
 import 'package:todolist/View/create_new_task.dart';
-import 'package:todolist/View/widgets/custom_text_button.dart';
 import 'package:todolist/View/widgets/delete_task_dialog.dart';
-import 'package:todolist/View/widgets/show_lottie.dart';
 import 'package:todolist/View/widgets/welcom_static_bg.dart';
 import '../../Riverpod/date_state.dart';
 import '../../Riverpod/task_state.dart';
@@ -126,9 +123,9 @@ class Homepage extends ConsumerWidget {
                             child: TaskTile(
                               title: allTasksAre[index - 1].title,
                               details: allTasksAre[index - 1].details,
-                              creationTime: DateTime.fromMicrosecondsSinceEpoch(
+                              creationTime: DateTime.fromMillisecondsSinceEpoch(
                                   allTasksAre[index - 1].creationTime),
-                              dueDate: DateTime.fromMicrosecondsSinceEpoch(
+                              dueDate: DateTime.fromMillisecondsSinceEpoch(
                                   allTasksAre[index - 1].dueDate),
                               pinned: allTasksAre[index - 1].pinned,
                               isOnline: allTasksAre[index - 1].isOnline,

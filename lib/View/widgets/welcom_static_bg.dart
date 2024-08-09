@@ -23,12 +23,11 @@ class _WelcomeBGStaticState extends State<WelcomeBGStatic> {
   void initState() {
     super.initState();
     Timer.periodic(const Duration(minutes: 1), (timer) {
-      if (TimeOfDay.now().hour < 18) {
+      if (TimeOfDay.now().hour < 18 && !isMorning) {
         isMorning = true;
-        print("MORNING");
-      } else {
+        setState(() {});
+      } else if (isMorning) {
         isMorning = false;
-        print("EVENING");
         setState(() {});
       }
     });

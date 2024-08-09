@@ -49,7 +49,6 @@ class _ShowLottieState extends State<ShowLottie> with TickerProviderStateMixin {
               if (_animationController.isAnimating) {
                 _animationController.stop();
               } else {
-                print(isForward);
                 if (isForward) {
                   _animationController
                       .reverse()

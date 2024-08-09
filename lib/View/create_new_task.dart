@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:todolist/Models/task_model.dart';
 import 'package:todolist/Riverpod/task_state.dart';
+import 'package:todolist/View%20Models/notification_view_model.dart';
 import 'package:todolist/View/widgets/custom_text_button.dart';
 import 'package:todolist/View/widgets/custom_text_field.dart';
 
@@ -19,6 +20,8 @@ class _CreateNewTaskState extends ConsumerState<CreateNewTask> {
   TextEditingController detailsController = TextEditingController();
   TextEditingController dueDateController = TextEditingController();
   TextEditingController dueTimeController = TextEditingController();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   final GlobalKey<FormState> _taskFormkey = GlobalKey<FormState>();
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
@@ -112,7 +115,9 @@ class _CreateNewTaskState extends ConsumerState<CreateNewTask> {
                     if (_taskFormkey.currentState!.validate()) {
                       _taskFormkey.currentState!.save();
                       selectedDate = selectedDate.copyWith(
-                          hour: selectedTime.hour, minute: selectedTime.minute);
+                        hour: selectedTime.hour,
+                        minute: selectedTime.minute,
+                      );
                       TaskModel task = TaskModel(
                         title: titleController.text,
                         details: detailsController.text,
@@ -121,6 +126,12 @@ class _CreateNewTaskState extends ConsumerState<CreateNewTask> {
                         pinned: false,
                         isOnline: true,
                         isArchived: false,
+                      );
+                      NotificationViewModel(context).scheduleNotification(
+                        schedule: selectedDate,
+                        id: DateTime.now().millisecondsSinceEpoch,
+                        title: titleController.text,
+                        body: detailsController.text,
                       );
                       ref
                           .read(taskNotifier.notifier)
