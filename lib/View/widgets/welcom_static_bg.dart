@@ -22,11 +22,18 @@ class _WelcomeBGStaticState extends State<WelcomeBGStatic> {
   @override
   void initState() {
     super.initState();
+    if (TimeOfDay.now().hour < 18 && !isMorning) {
+      isMorning = true;
+      setState(() {});
+    } else if (TimeOfDay.now().hour > 18 && isMorning) {
+      isMorning = false;
+      setState(() {});
+    }
     Timer.periodic(const Duration(minutes: 1), (timer) {
       if (TimeOfDay.now().hour < 18 && !isMorning) {
         isMorning = true;
         setState(() {});
-      } else if (isMorning) {
+      } else if (TimeOfDay.now().hour > 18 && isMorning) {
         isMorning = false;
         setState(() {});
       }

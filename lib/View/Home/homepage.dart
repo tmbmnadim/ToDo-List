@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:todolist/Models/task_model.dart';
@@ -22,6 +23,7 @@ class Homepage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Size scrSize = MediaQuery.of(context).size;
     double statusBarHeight = MediaQuery.of(context).padding.top;
+    FlutterLocalNotificationsPlugin flp = FlutterLocalNotificationsPlugin();
 
     ref.read(taskNotifier.notifier).getTasksLocalNotifier();
 
@@ -140,6 +142,15 @@ class Homepage extends ConsumerWidget {
                                       subTitle: "This task will be removed!",
                                       buttonColor: Colors.red.shade900,
                                       onPress: () {
+                                        flp.cancel(int.tryParse(
+                                              DateFormat("ddmmyyhhmm").format(
+                                                DateTime
+                                                    .fromMillisecondsSinceEpoch(
+                                                        allTasksAre[index - 1]
+                                                            .dueDate),
+                                              ),
+                                            ) ??
+                                            001);
                                         ref
                                             .read(taskNotifier.notifier)
                                             .deleteTaskLocalNotifier(
@@ -199,6 +210,7 @@ class Homepage extends ConsumerWidget {
                             subTitle: "This will DELETE all of the tasks!",
                             buttonColor: Colors.red.shade900,
                             onPress: () {
+                              flp.cancelAll();
                               ref
                                   .read(taskNotifier.notifier)
                                   .deleteListTaskLocalNotifier(allTasksAre);
