@@ -55,7 +55,7 @@ class NotificationViewModel {
 
   Future<void> initNotification() async {
     AndroidInitializationSettings initializationSettingsAndroid =
-        const AndroidInitializationSettings('notification_icon');
+        const AndroidInitializationSettings('launcher_icon');
 
     var initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);

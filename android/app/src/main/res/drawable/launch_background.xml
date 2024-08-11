@@ -6,4 +6,7 @@
     <item>
         <bitmap android:gravity="center" android:src="@drawable/splash"/>
     </item>
+    <item>
+        <bitmap android:gravity="center" android:src="@drawable/ic_stat_todo"/>
+    </item>
 </layer-list>

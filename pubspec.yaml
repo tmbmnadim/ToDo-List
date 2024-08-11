@@ -24,10 +24,10 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
 
 flutter_native_splash:
-  color: "#000000"
-  image: assets/todo.png
+  color: "#EEEEEE"
+  image: assets/splash.png
   android_12:
-    image: assets/todo.png
+    image: assets/splash.png
 
 dev_dependencies:
   flutter_test:
@@ -52,5 +52,5 @@ flutter:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/1024.png"
+  image_path: "assets/todo.png"
   min_sdk_android: 23

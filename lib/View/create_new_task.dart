@@ -129,7 +129,9 @@ class _CreateNewTaskState extends ConsumerState<CreateNewTask> {
                       );
                       NotificationViewModel(context).scheduleNotification(
                         schedule: selectedDate,
-                        id: DateTime.now().millisecondsSinceEpoch,
+                        id: int.tryParse(DateFormat("ddmmyyhhmm")
+                                .format(selectedDate)) ??
+                            001,
                         title: titleController.text,
                         body: detailsController.text,
                       );
