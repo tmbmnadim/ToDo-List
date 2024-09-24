@@ -14,7 +14,15 @@ class TaskServices {
     if (tasksMap.isNotEmpty) {
       tasks.addAll((tasksMap.values as Iterable<TaskModel>));
     }
+    tasks = _sortTasksByCreationDate(tasks);
 
+    return tasks;
+  }
+
+  List<TaskModel> _sortTasksByCreationDate(List<TaskModel> tasks) {
+    tasks.sort((a, b) {
+      return -a.creationTime.compareTo(b.creationTime);
+    });
     return tasks;
   }
 
@@ -58,8 +66,11 @@ class TaskServices {
     return tasks;
   }
 
-  Future<void> moveToArchive(TaskModel task) async {
-    EasyLoading.show(status: "Moving to archive...");
+  Future<void> moveToArchive(TaskModel task,
+      {bool noNotification = false}) async {
+    if (noNotification) {
+      EasyLoading.show(status: "Moving to archive...");
+    }
     task = task.copyWith(isArchived: true);
     deleteTaskLocal(task);
     Box taskArchiveBox = await Hive.openBox<TaskModel>("tasksArchive");

@@ -16,25 +16,97 @@ import '../widgets/date_list.dart';
 import '../widgets/month_viewer.dart';
 import '../widgets/task_tile.dart';
 
-class Homepage extends ConsumerWidget {
+class Homepage extends ConsumerStatefulWidget {
   const Homepage({super.key});
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomepageState();
+}
+
+class _HomepageState extends ConsumerState<Homepage>
+    with SingleTickerProviderStateMixin {
+  FlutterLocalNotificationsPlugin flp = FlutterLocalNotificationsPlugin();
+  DateTimeState dateTimeStateController = DateTimeState();
+  List<TaskModel> allTasksAre = [];
+  late AnimationController _aniCtrl;
+  late Animation<int> _ani;
+  List<String> titleTexts = [
+    "Older Tasks are moved to archive",
+    "Older Tasks are moved to arc",
+    "Older Tasks are moved to",
+    "Older Tasks are moved",
+    "Older Tasks are mo",
+    "Older Tasks are",
+    "Older Tasks",
+    "Older Ta",
+    "Older",
+    "Ol",
+    "",
+    "To",
+    "ToDo",
+    "ToDo Li",
+    "ToDo List",
+  ];
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    super.initState();
+    _aniCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+    _ani = _aniCtrl.drive(
+      TweenSequence<int>(
+        [
+          TweenSequenceItem<int>(
+            tween: IntTween(
+              begin: 0,
+              end: 10,
+            ).chain(
+              CurveTween(
+                curve: const Interval(0, 0.8),
+              ),
+            ),
+            weight: 50,
+          ),
+          TweenSequenceItem<int>(
+            tween: IntTween(
+              begin: 10,
+              end: titleTexts.length - 1,
+            ).chain(
+              CurveTween(
+                curve: const Interval(0.8, 1),
+              ),
+            ),
+            weight: 50,
+          ),
+        ],
+      ),
+    );
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      allTasksAre = ref.watch(taskNotifier);
+      dateTimeStateController = ref.read(dateState.notifier);
+      Future.delayed(const Duration(seconds: 2))
+          .whenComplete(() => _aniCtrl.forward());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     Size scrSize = MediaQuery.of(context).size;
     double statusBarHeight = MediaQuery.of(context).padding.top;
-    FlutterLocalNotificationsPlugin flp = FlutterLocalNotificationsPlugin();
-
-    ref.read(taskNotifier.notifier).getTasksLocalNotifier();
-
-    List<TaskModel> allTasksAre = ref.watch(taskNotifier);
-
-    DateTimeState dateTimeStateController = ref.read(dateState.notifier);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text("ToDo List"),
+        title: AnimatedBuilder(
+          animation: _aniCtrl,
+          builder: (context, child) => Text(
+            titleTexts[_ani.value],
+            style: _ani.value <= 11
+                ? Theme.of(context).textTheme.titleSmall
+                : Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -100,7 +172,7 @@ class Homepage extends ConsumerWidget {
                       .getTasksOfDateLocalNotifier(ref.watch(dateState));
                 } else {
                   dateTimeStateController.selectDay(DateTime.now().day);
-                  ref.read(taskNotifier.notifier).getTasksLocalNotifier();
+                  ref.read(taskNotifier.notifier).getAllTasks();
                 }
               },
             ),
@@ -142,15 +214,7 @@ class Homepage extends ConsumerWidget {
                                       subTitle: "This task will be removed!",
                                       buttonColor: Colors.red.shade900,
                                       onPress: () {
-                                        flp.cancel(int.tryParse(
-                                              DateFormat("ddmmyyhhmm").format(
-                                                DateTime
-                                                    .fromMillisecondsSinceEpoch(
-                                                        allTasksAre[index - 1]
-                                                            .dueDate),
-                                              ),
-                                            ) ??
-                                            001);
+                                        flp.cancel(allTasksAre[index - 1].id);
                                         ref
                                             .read(taskNotifier.notifier)
                                             .deleteTaskLocalNotifier(
@@ -197,7 +261,11 @@ class Homepage extends ConsumerWidget {
                     onCreate: () {
                       showDialog(
                         context: context,
-                        builder: (context) => const CreateNewTask(),
+                        builder: (context) => CreateNewTask(
+                          id: allTasksAre.isEmpty
+                              ? 0
+                              : allTasksAre.first.id + 1,
+                        ),
                       );
                     },
                     onDelete: () {

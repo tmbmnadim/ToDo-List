@@ -9,7 +9,8 @@ import 'package:todolist/View/widgets/custom_text_button.dart';
 import 'package:todolist/View/widgets/custom_text_field.dart';
 
 class CreateNewTask extends ConsumerStatefulWidget {
-  const CreateNewTask({super.key});
+  final int id;
+  const CreateNewTask({super.key, required this.id});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _CreateNewTaskState();
@@ -118,27 +119,34 @@ class _CreateNewTaskState extends ConsumerState<CreateNewTask> {
                         hour: selectedTime.hour,
                         minute: selectedTime.minute,
                       );
-                      TaskModel task = TaskModel(
-                        title: titleController.text,
-                        details: detailsController.text,
-                        creationTime: DateTime.now().millisecondsSinceEpoch,
-                        dueDate: selectedDate.millisecondsSinceEpoch,
-                        pinned: false,
-                        isOnline: true,
-                        isArchived: false,
-                      );
-                      NotificationViewModel(context).scheduleNotification(
-                        schedule: selectedDate,
-                        id: int.tryParse(DateFormat("ddmmyyhhmm")
-                                .format(selectedDate)) ??
-                            001,
-                        title: titleController.text,
-                        body: detailsController.text,
-                      );
-                      ref
-                          .read(taskNotifier.notifier)
-                          .createTaskLocalNotifier(task);
-                      Navigator.pop(context);
+                      if (selectedDate.isAfter(DateTime.now())) {
+                        TaskModel task = TaskModel(
+                          id: widget.id,
+                          title: titleController.text,
+                          details: detailsController.text,
+                          creationTime: DateTime.now().millisecondsSinceEpoch,
+                          dueDate: selectedDate.millisecondsSinceEpoch,
+                          pinned: false,
+                          isOnline: true,
+                          isArchived: false,
+                        );
+                        NotificationViewModel(context).scheduleNotification(
+                          schedule: selectedDate,
+                          id: widget.id,
+                          title: titleController.text,
+                          body: detailsController.text,
+                        );
+                        ref
+                            .read(taskNotifier.notifier)
+                            .createTaskLocalNotifier(task);
+                        Navigator.pop(context);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Invalid Date or Time"),
+                          ),
+                        );
+                      }
                     }
                   },
                 )
@@ -176,7 +184,7 @@ class _CreateNewTaskState extends ConsumerState<CreateNewTask> {
       context: context,
       initialTime: selectedTime,
     );
-    selectedTime = tempTime!;
+    selectedTime = tempTime ?? selectedTime;
     if (context.mounted) {
       dueTimeController.text = selectedTime.format(context);
     }

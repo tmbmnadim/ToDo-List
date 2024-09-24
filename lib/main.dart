@@ -36,7 +36,8 @@ class _ToDoListState extends ConsumerState<ToDoList> {
     final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
     FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
     ref.read(themeNotifier.notifier).getTheme();
-    ref.read(taskNotifier.notifier).getTasksLocalNotifier();
+    ref.read(taskNotifier.notifier).getAllTasks();
+    ref.read(taskNotifier.notifier).expiredTasksToArchive();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       NotificationViewModel(context).initNotification();
     });

@@ -5,6 +5,7 @@ part 'task_model.g.dart';
 @HiveType(typeId: 0)
 class TaskModel {
   TaskModel({
+    required this.id,
     required this.title,
     required this.details,
     required this.creationTime,
@@ -15,21 +16,24 @@ class TaskModel {
   });
 
   @HiveField(0)
-  late String title;
+  late int id;
   @HiveField(1)
-  late String details;
+  late String title;
   @HiveField(2)
-  late int creationTime;
+  late String details;
   @HiveField(3)
-  late int dueDate;
+  late int creationTime;
   @HiveField(4)
-  late bool pinned;
+  late int dueDate;
   @HiveField(5)
-  late bool isOnline;
+  late bool pinned;
   @HiveField(6)
+  late bool isOnline;
+  @HiveField(7)
   late bool isArchived;
 
   TaskModel.fromJson({required Map<String, dynamic> json}) {
+    id = json['id'];
     title = json['title'];
     details = json['details'];
     creationTime = json['creationTime'];
@@ -40,6 +44,7 @@ class TaskModel {
   }
 
   TaskModel copyWith({
+    int? id,
     String? title,
     String? details,
     int? creationTime,
@@ -49,6 +54,7 @@ class TaskModel {
     bool? isArchived,
   }) {
     return TaskModel(
+      id: id ?? this.id,
       title: title ?? this.title,
       details: details ?? this.details,
       creationTime: creationTime ?? this.creationTime,
@@ -60,6 +66,7 @@ class TaskModel {
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
         'title': title,
         'details': details,
         'creationTime': creationTime,

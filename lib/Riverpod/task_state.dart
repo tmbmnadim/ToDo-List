@@ -11,8 +11,27 @@ class TaskNotifier extends Notifier<List<TaskModel>> {
     return [];
   }
 
-  void getTasksLocalNotifier() async {
+  Future<void> getAllTasks() async {
     state = await TaskServices().getTasksLocal();
+  }
+
+  void expiredTasksToArchive() async {
+    await getAllTasks().whenComplete(() async {
+      if (state.isNotEmpty) {
+        List<TaskModel> expiredTasks = [];
+        for (TaskModel task in state) {
+          DateTime dueDate = DateTime.fromMillisecondsSinceEpoch(task.dueDate);
+          if (DateTime.now().isAfter(dueDate)) {
+            expiredTasks.add(task);
+          }
+        }
+        for (var singleTask in expiredTasks) {
+          await TaskServices().moveToArchive(singleTask, noNotification: true);
+        }
+        print(
+            "======================${expiredTasks.length}======================");
+      }
+    });
   }
 
   void getTasksOfDateLocalNotifier(DateTime date) async {
@@ -28,17 +47,17 @@ class TaskNotifier extends Notifier<List<TaskModel>> {
 
   void createTaskLocalNotifier(TaskModel task) async {
     await TaskServices().createTaskLocal(task);
-    getTasksLocalNotifier();
+    getAllTasks();
   }
 
   void deleteTaskLocalNotifier(TaskModel task) async {
     await TaskServices().deleteTaskLocal(task);
-    getTasksLocalNotifier();
+    getAllTasks();
   }
 
   void deleteListTaskLocalNotifier(List<TaskModel> tasks) async {
     await TaskServices().deleteListTaskLocal(tasks);
-    getTasksLocalNotifier();
+    getAllTasks();
   }
 
   void getTasksArchiveNotifier() async {
@@ -47,7 +66,7 @@ class TaskNotifier extends Notifier<List<TaskModel>> {
 
   void moveToArchiveNotifier(TaskModel task) async {
     await TaskServices().moveToArchive(task);
-    getTasksLocalNotifier();
+    getAllTasks();
   }
 
   void deleteTaskArchiveNotifier(TaskModel task) async {
